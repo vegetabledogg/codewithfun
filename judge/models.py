@@ -3,12 +3,12 @@ from accounts.models import Profile
 
 def in_upload_path(instance, filename):
     """ Function to return upload path for test case input file"""
-    return "/".join(["testcases", str(instance.id)]) + ".in"
+    return "/".join(["testcases", str(instance.lesson.id)]) + ".in"
 
 
 def out_upload_path(instance, filename):
     """ Function to return upload path for test case output file"""
-    return "/".join(["testcases", str(instance.id)]) + ".out"
+    return "/".join(["testcases", str(instance.lesson.id)]) + ".out"
 
 class Course(models.Model):
     course_name = models.CharField(max_length=255)
@@ -26,6 +26,12 @@ class Lesson(models.Model):
     learn = models.TextField()
     instructions = models.TextField()
     hint = models.TextField()
+    language = models.CharField()
+    time_limit = models.IntegerField()
+    memory_limit = models.IntegerField()
+
+class Testcase(models.Model):
+    lesson = models.ForeignKey(Lesson)
     inputfile = models.FileField(upload_to=in_upload_path)
     outputfile = models.FileField(upload_to=out_upload_path)
 
