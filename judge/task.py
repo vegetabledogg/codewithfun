@@ -1,6 +1,7 @@
-# from celery.decorators import task
-from judge.models import Submission, Lesson
+from celery.decorators import task
+from judge.models import Submission, Lesson, Testcase
 from accounts.models import Profile
+from django.core.files import File
 import subprocess
 import os
 
@@ -26,15 +27,16 @@ class Container:
     def stop(self):
         subprocess.call(['docker', 'stop', self.container_id])
 
-# @task(name='evaluateSubmission')
+@task(name='evaluateSubmission')
 def evaluate_submission(submission_id):
     try:
-        submission = Submission.object.get(pk=submission_id)
+        submission = Submission.objects.get(pk=submission_id)
     except:
         print('ERROR: submission with id = %d not found' % (submission_id))
     lesson = submission.lesson
+    testcase = Testcase.objects.get(lesson=lesson)
     username = submission.submitter.user.username
-    input_filename = lesson.inputfile.name.split('/')[1]
+    input_filename = testcase.inputfile.name.split('/')[1]
     memory_limit = str(lesson.memory_limit)
     time_limit = str(lesson.time_limit)
     language = lesson.language
@@ -43,7 +45,7 @@ def evaluate_submission(submission_id):
 
     container = Container()
     container.create_container('ubuntu:16.04')
-    container.copy_local2container(lesson.inputfile.name, input_filename)
+    container.copy_local2container(testcase.inputfile.name, input_filename)
 
     if language == 'C' or language == 'C++':
         if language == 'C':
@@ -62,29 +64,19 @@ def evaluate_submission(submission_id):
         if compile_status != 0:
             container.copy_container2local(user_output_filename, user_output_filepath)  
             submission.status = 'CE'
-            # submission.result
-            submission.save()
         else:
             exe_status = container.execute(['timeout', time_limit, './{}'.format(exe_filename), '<', input_filename, '>>', user_output_filename, '2>&1'])
             container.copy_container2local(user_output_filename, user_output_filepath)  
             if exe_status == 124:
                 submission.status = 'TL'
-                # submission.result
-                submission.save()
             elif exe_status != 0:
                 submission.status = 'RE'
-                # submission.result
-                submission.save()
             else: 
-                diff = subprocess.call(['diff', lesson.outputfile.name, user_output_filepath])
+                diff = subprocess.call(['diff', testcase.outputfile.name, user_output_filepath])
                 if not diff:
                     submission.status = 'AC'
-                    # submission.result
-                    submission.save()
                 else:
                     submission.status = 'WA'
-                    # submission.result
-                    submission.save()
     elif language == 'Python':
         src_filename = '{}.{}.py'.format(username, submission)
         src_filepath = 'submissions/{}'.format(src_filename)
@@ -96,21 +88,17 @@ def evaluate_submission(submission_id):
         container.copy_container2local(user_output_filename, user_output_filepath)
         if exe_status == 124:
             submission.status = 'TL'
-            # submission.result
-            submission.save()
         elif exe_status != 0:
             submission.status = 'RE'
-            # submission.result
-            submission.save()
         else:
-            diff = subprocess.call(['diff', lesson.outputfile.name, user_output_filepath])
+            diff = subprocess.call(['diff', testcase.outputfile.name, user_output_filepath])
             if not diff:
                 submission.status = 'AC'
-                # submission.result
-                submission.save()
             else:
                 submission.status = 'WA'
-                submission.save()
+    resultfile = open(user_output_filepath)
+    submission.result = File(resultfile)
+    submission.save()
 
     os.remove(src_filepath)
     os.remove(user_output_filepath)
