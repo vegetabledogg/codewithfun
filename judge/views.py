@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from judge.forms import SubmissionForm
+#from judge.forms import SubmissionForm
 from accounts.models import Profile
 from judge.models import Lesson, Submission, ToLearn, Course
 from judge.task import evaluate_submission

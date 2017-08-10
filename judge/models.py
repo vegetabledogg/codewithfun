@@ -26,9 +26,15 @@ class Lesson(models.Model):
     learn = models.TextField()
     instructions = models.TextField()
     hint = models.TextField()
+<<<<<<< HEAD
     language = models.CharField(max_length=16)
     time_limit = models.IntegerField()
     memory_limit = models.IntegerField()
+=======
+    language = models.CharField(max_length=255, default='')
+    time_limit = models.IntegerField(default=400)
+    memory_limit = models.IntegerField(default=65536)
+>>>>>>> 6633dbff8eabd068182a1ff199280065dfae3bdd
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)
