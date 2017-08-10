@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.learn, name='learn'),
-    url(r'course1/', views.course1, name='course1'),
+    url(r'([a-z]+)/$', views.course_detail, name='course_detail'),
 ]

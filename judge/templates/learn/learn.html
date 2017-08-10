@@ -1,7 +1,12 @@
-<html>
+{% extends 'base.html' %}
+
+{% block content %}
     <ul>
-        <li><a href="course1">course1</a></li>
-        <li><a href="course2">course2</a></li>
-        <li><a href="course3">course3</a></li>
+        {% for each_course in all_courses %}
+
+        <li><a href="{% url 'course_detail' pk=each_course.course_name %}">Course name: {{each_course.course_name}}</a></li>
+        <p>{{each_course.brief}}</p>
+        <hr/>
+        {% endfor %}
     </ul>
-</html>
+{% endblock content %}

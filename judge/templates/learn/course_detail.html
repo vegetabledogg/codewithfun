@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js">
+        </script>
+    </head>
+
+    <body>
+        <div>
+            <h1>
+                Course name: {{ course.course_name }}
+            </h1>
+        </div>
+
+
+        <hr/>
+
+        <div>
+            <h1>Brief Introduction</h1>
+            <p><i><em>{{ course.brief }}</em></i></p>
+        </div>
+
+        <hr/>
+
+        <div>
+            <h1>Overview</h1>
+            <p><i><em>{{ course.overview }}</em></i></p>
+        </div>
+
+        <hr/>
+
+        <div>
+            <h1>All lessons</h1>
+            <ol>
+                {% for each_lesson in all_lessons %}
+                <li>Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div>
+            <h1>proportion</h1>
+            <button >show proportion: {{ proportion }}</button>
+            <script>
+                function count() {
+                    var checked_num = $("input[type=checkbox][name=course]:checked").length;
+                    var total_lesson = {{course.total_lesson}};
+                    document.getElementById("p").innerHTML=checked_num/total_lesson;
+                    console.log(checked_num);
+                    console.log(total_lesson);
+                }
+            </script>
+        </div>
+    </body>
+
+</html>
