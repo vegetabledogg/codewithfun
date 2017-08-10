@@ -1,3 +1,4 @@
+"""
 from django import forms
 from judge.models import Lesson, Submission
 
@@ -7,3 +8,4 @@ class SubmissionForm(forms.ModelForm):
     class Meta:
         model = Submission
         field = ['code']
+"""
