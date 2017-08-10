@@ -6,4 +6,4 @@ class SubmissionForm(forms.ModelForm):
         
     class Meta:
         model = Submission
-        field = ['code']
+        fields = ['code']

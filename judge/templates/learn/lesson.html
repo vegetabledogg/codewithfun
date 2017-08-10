@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>
+        {{ lesson.lesson_name }}
+    </h1>
+    <p>
+        {{ lesson.learn }}
+    </p>
+    <p>
+        {{ lesson.instructions }}
+    </p>
+    <p>
+        {{ lesson.hint }}
+    </p>
+    <form method="POST">{% csrf_token %} 
+        {{ form.as_p }}
+        <button type="submit">submit</button> 
+    </form>
+{% endblock content %}

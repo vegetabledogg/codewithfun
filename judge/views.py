@@ -19,18 +19,19 @@ def course_detail(request, pk):
 def course1(request):
     return render(request, 'learn/course_base.html')
 
-@login_required
+# @login_required
 def lesson(request, lid):
+    lesson = Lesson.objects.get(pk=lid)
     if request.method == 'POST':
         form = SubmissionForm(request.POST)
         if form.is_valid():
             submission = form.save()
-            submission.lesson = Lesson.objects.get(pk=lid)
+            submission.lesson = lesson
             submission.submitter = Profile.objects.get(user=request.user)
             submission.save()
             evaluate_submission.delay(submission.id)
-            return render()
+            return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
     else:
         form = SubmissionForm()
-        return render()
+        return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
 

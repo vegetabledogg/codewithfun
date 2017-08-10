@@ -26,7 +26,7 @@ class Lesson(models.Model):
     learn = models.TextField()
     instructions = models.TextField()
     hint = models.TextField()
-    language = models.CharField()
+    language = models.CharField(max_length=16)
     time_limit = models.IntegerField()
     memory_limit = models.IntegerField()
 
@@ -40,8 +40,8 @@ class Submission(models.Model):
     submission_time = models.DateTimeField(auto_now_add=True)
     submitter = models.ForeignKey('accounts.Profile')
     code = models.TextField()
-    status = models.IntegerField()
-    result = models.TextField()
+    status = models.CharField(max_length=8, default='AC')
+    result = models.TextField(default='')
 
 class ToLearn(models.Model):
     user = models.ForeignKey('accounts.Profile')
