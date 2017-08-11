@@ -15,7 +15,7 @@ def evaluate_submission(submission_id):
     testcase = Testcase.objects.get(lesson=lesson)
     username = submission.submitter.user.username
     input_filename = testcase.inputfile.name.split('/')[1]
-    memory_limit = str(lesson.memory_limit) + 'm'
+    memory_limit = lesson.memory_limit
     time_limit = str(lesson.time_limit)
     language = lesson.language
     user_output_filename = '{}.{}.output'.format(username, submission_id)
