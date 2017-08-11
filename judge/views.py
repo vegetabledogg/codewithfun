@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-#from judge.forms import SubmissionForm
+from judge.forms import SubmissionForm
 from accounts.models import Profile
 from judge.models import Lesson, Submission, ToLearn, Course
 from judge.task import evaluate_submission
@@ -19,7 +19,7 @@ def course_detail(request, pk):
 def course1(request):
     return render(request, 'learn/course_base.html')
 
-# @login_required
+@login_required
 def lesson(request, lid):
     lesson = Lesson.objects.get(pk=lid)
     if request.method == 'POST':
