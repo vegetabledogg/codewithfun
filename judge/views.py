@@ -20,8 +20,13 @@ def course1(request):
     return render(request, 'learn/course_base.html')
 
 @login_required
-def lesson(request, lid):
-    lesson = Lesson.objects.get(pk=lid)
+def lesson(request, course_url, lesson_url, lesson_num):
+    lesson = Lesson.objects.get(lesson_url=lesson_url, lesson_num=lesson_num)
+    try:
+        next_lesson = Lesson.objects.get(course=lesson.course, lesson_num=lesson.lesson_num+1)
+    except:
+        next_lesson = lesson
+        next_lesson.lesson_num += 1
     if request.method == 'POST':
         form = SubmissionForm(request.POST)
         if form.is_valid():
@@ -30,8 +35,8 @@ def lesson(request, lid):
             submission.submitter = Profile.objects.get(user=request.user)
             submission.save()
             evaluate_submission.delay(submission.id)
-            return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
+            return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'submission': submission, 'course_url': course_url})
     else:
         form = SubmissionForm()
-        return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
+        return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'course_url': course_url})
 

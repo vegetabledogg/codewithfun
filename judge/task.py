@@ -43,8 +43,11 @@ def evaluate_submission(submission_id):
         srcfile.close()
         subprocess.call(["docker", "cp", src_filepath, "{}:/{}".format(container_id, src_filename)])
         compile_status = subprocess.call(['docker', 'exec', container_id, compiler, src_filename, '-o', exe_filename], stderr=user_errfile)
+        user_errfile.close()
         if compile_status != 0:
-            submission.result = File(user_errfile)  
+            user_errfile = open('useroutput/err.{}'.format(user_output_filename), 'r')
+            result = user_errfile.read()
+            submission.result = result 
             submission.status = 'CE'
         else:
             exe_status = subprocess.call(['docker', 'exec', container_id, 'python3', 'run.py', exe_filename, input_filename, user_output_filename, time_limit])  
@@ -59,8 +62,9 @@ def evaluate_submission(submission_id):
                     submission.status = 'AC'
                 else:
                     submission.status = 'WA'
-            resultfile = open(user_output_filepath)
-            submission.result = File(resultfile)
+            user_outputfile = open(user_output_filepath, 'r')
+            result = user_outputfile.read()
+            submission.result = result
     elif language == 'Python':
         src_filename = '{}.{}.py'.format(username, submission)
         src_filepath = 'submissions/{}'.format(src_filename)
@@ -81,8 +85,9 @@ def evaluate_submission(submission_id):
                 submission.status = 'AC'
             else:
                 submission.status = 'WA'
-        resultfile = open(user_output_filepath)
-        submission.result = File(resultfile)
+        user_outputfile = open(user_output_filepath, 'r')
+        result = user_outputfile.read()
+        submission.result = result
     submission.save()
 
     os.remove(src_filepath)

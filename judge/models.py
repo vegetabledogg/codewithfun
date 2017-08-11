@@ -22,6 +22,7 @@ class Course(models.Model):
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
+    lesson_url = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
     learn = models.TextField()
     instructions = models.TextField()
@@ -40,7 +41,7 @@ class Submission(models.Model):
     submission_time = models.DateTimeField(auto_now_add=True)
     submitter = models.ForeignKey('accounts.Profile')
     code = models.TextField()
-    status = models.CharField(max_length=8, default='AC')
+    status = models.CharField(max_length=8, default='')
     result = models.TextField(default='')
 
 class ToLearn(models.Model):
