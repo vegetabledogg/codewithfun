@@ -4,7 +4,7 @@
     <ul>
         {% for each_course in all_courses %}
 
-        <li><a href="{% url 'course_detail' pk=each_course.course_name|cut:" " %}">Course name: {{each_course.course_name}}</a></li>
+        <li><a href="{% url 'course_detail' each_course.course_name|cut:" " %}">Course name: {{each_course.course_name}}</a></li>
         <p>{{each_course.brief}}</p>
         <p>{{each_course.overview|cut:" "}}</p>
         <hr/>
