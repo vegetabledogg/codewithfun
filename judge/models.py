@@ -28,7 +28,7 @@ class Lesson(models.Model):
     instructions = models.TextField()
     hint = models.TextField()
     language = models.CharField(max_length=32)
-    time_limit = models.IntegerField()
+    time_limit = models.CharField(max_length=16)
     memory_limit = models.CharField(max_length=16)
 
 class Testcase(models.Model):

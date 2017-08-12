@@ -11,8 +11,8 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     input_file = open(input_filename, "r")
-    output_file = open(output_filename, "w")
-    returncode = subprocess.call(["timeout", tl, "./{}".format(executable)], stdin = input_file, stdout = output_file)
-    print(returncode)
+    output_file = open(output_filename, "w+")
+    returncode = subprocess.call(["timeout", tl, "./{}".format(executable)], stdin=input_file, stdout=output_file)#, stderr=err_file)
     input_file.close()
     output_file.close()
+    sys.exit(returncode)

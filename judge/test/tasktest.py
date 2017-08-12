@@ -12,7 +12,7 @@ user_output_filename = 'usertestout.output'
 user_output_filepath = './{}'.format(user_output_filename)
 user_outputfile = open('./err.out', 'a')
 
-os.chdir('/Users/yunanlong/Desktop')
+os.chdir('/Users/yunanlong/Desktop/codewithfun/judge/test')
 
 container_id = subprocess.check_output(["docker", "run", "-it", "-m", memory_limit, "-d", "test:v1"])
 container_id = container_id.decode('utf-8')

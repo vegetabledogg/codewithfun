@@ -1,22 +1,23 @@
-from celery.decorators import task
+# from celery.decorators import task
 from judge.models import Submission, Lesson, Testcase
 from accounts.models import Profile
 from django.core.files import File
 import subprocess
 import os
 
-@task(name='evaluateSubmission')
+# @task(name='evaluate_submission')
 def evaluate_submission(submission_id):
     try:
         submission = Submission.objects.get(pk=submission_id)
     except:
         print('ERROR: submission with id = %d not found' % (submission_id))
+    # print(submission.id)
     lesson = submission.lesson
     testcase = Testcase.objects.get(lesson=lesson)
     username = submission.submitter.user.username
     input_filename = testcase.inputfile.name.split('/')[1]
     memory_limit = lesson.memory_limit
-    time_limit = str(lesson.time_limit)
+    time_limit = lesson.time_limit
     language = lesson.language
     user_output_filename = '{}.{}.output'.format(username, submission_id)
     user_output_filepath = 'useroutput/{}'.format(user_output_filename)
@@ -42,15 +43,20 @@ def evaluate_submission(submission_id):
         print(submission.code, file=srcfile)
         srcfile.close()
         subprocess.call(["docker", "cp", src_filepath, "{}:/{}".format(container_id, src_filename)])
-        compile_status = subprocess.call(['docker', 'exec', container_id, compiler, src_filename, '-o', exe_filename], stderr=user_errfile)
+        if language == 'C':
+            compile_status = subprocess.call(['docker', 'exec', container_id, compiler, '-std=c99', src_filename, '-o', exe_filename], stderr=user_errfile)
+        elif language == 'C++':
+            compile_status = subprocess.call(['docker', 'exec', container_id, compiler, '-std=c99', src_filename, '-o', exe_filename], stderr=user_errfile)
         user_errfile.close()
         if compile_status != 0:
             user_errfile = open('useroutput/err.{}'.format(user_output_filename), 'r')
-            result = user_errfile.read()
+            result = user_errfile.read(32767)
             submission.result = result 
             submission.status = 'CE'
         else:
+            subprocess.call(["docker", "cp", 'run.py', "{}:/run.py".format(container_id)])
             exe_status = subprocess.call(['docker', 'exec', container_id, 'python3', 'run.py', exe_filename, input_filename, user_output_filename, time_limit])  
+            print(exe_status)
             subprocess.call(["docker", "cp", "{}:/{}".format(container_id, user_output_filename), user_output_filepath])  
             if exe_status == 124:
                 submission.status = 'TL'
@@ -63,8 +69,9 @@ def evaluate_submission(submission_id):
                 else:
                     submission.status = 'WA'
             user_outputfile = open(user_output_filepath, 'r')
-            result = user_outputfile.read()
+            result = user_outputfile.read(32767)
             submission.result = result
+            os.remove(user_output_filepath)
     elif language == 'Python':
         src_filename = '{}.{}.py'.format(username, submission)
         src_filepath = 'submissions/{}'.format(src_filename)
@@ -86,12 +93,15 @@ def evaluate_submission(submission_id):
             else:
                 submission.status = 'WA'
         user_outputfile = open(user_output_filepath, 'r')
-        result = user_outputfile.read()
+        result = user_outputfile.read(32767)
         submission.result = result
+        os.remove(user_output_filepath)
     submission.save()
+    # sub = Submission.objects.get(pk=submission_id)
+    # print(sub.result)
+    # print(sub.status)
 
     os.remove(src_filepath)
-    os.remove(user_output_filepath)
     os.remove('useroutput/err.{}'.format(user_output_filename))
 
     subprocess.call(["docker", "stop", container_id])

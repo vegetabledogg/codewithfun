@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from judge.forms import SubmissionForm
 from accounts.models import Profile
 from judge.models import Lesson, Submission, ToLearn, Course
-from judge.task import evaluate_submission
+from judge.tasks import evaluate_submission
 
 def learn(request):
     all_courses = Course.objects.all()
@@ -30,12 +30,19 @@ def lesson(request, course_url, lesson_url, lesson_num):
     if request.method == 'POST':
         form = SubmissionForm(request.POST)
         if form.is_valid():
-            submission = form.save()
-            submission.lesson = lesson
+            submission = Submission()
+            submission.code = form.cleaned_data['code']
+            submission.lesson = Lesson.objects.get(pk=lesson.id)
             submission.submitter = Profile.objects.get(user=request.user)
             submission.save()
-            evaluate_submission.delay(submission.id)
-            return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'submission': submission, 'course_url': course_url})
+            # evaluate_submission.delay(submission.id)
+            # print(submission.id)
+            evaluate_submission(submission.id)
+            sub = Submission.objects.get(pk=submission.id)
+            # print(sub.id)
+            # print(sub.status)
+            # print(sub.result)
+            return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': sub, 'course_url': course_url})
     else:
         form = SubmissionForm()
         return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'course_url': course_url})

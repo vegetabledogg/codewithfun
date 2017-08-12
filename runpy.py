@@ -12,7 +12,8 @@ if __name__ == "__main__":
 
     input_file = open(input_filename, "r")
     output_file = open(output_filename, "w")
-    returncode = subprocess.call(["timeout", tl, "python3", executable], stdin = input_file, stdout = output_file, stderr = output_file)
-    print(returncode)
+    returncode = subprocess.call(["timeout", tl, "python3", executable], stdin=input_file, stdout=output_file, stderr=output_file)
+    # print(returncode)
     input_file.close()
     output_file.close()
+    sys.exit(returncode)
