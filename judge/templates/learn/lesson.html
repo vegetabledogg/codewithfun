@@ -17,4 +17,17 @@
         {{ form.as_p }}
         <button type="submit">submit</button> 
     </form>
+    <p>
+        result
+        {{ sub.result|linebreaks }}
+    </p>
+    <p>
+        status
+        {{ sub.status }}
+    </p>
+    {% if next_lesson.lesson_num <= lesson.course.total_lesson %}
+        <a href="http://127.0.0.1:8000{% url 'lesson' course_url next_lesson.lesson_url next_lesson.lesson_num %}">next lesson</a>
+    {% else %}
+        <a herf="">next lesson</a>
+    {% endif %}
 {% endblock content %}

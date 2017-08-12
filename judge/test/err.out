@@ -1,0 +1,11 @@
+gcc: error: testcode.c: No such file or directory
+gcc: fatal error: no input files
+compilation terminated.
+testcode.c: In function 'main':
+testcode.c:3:2: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+  printf("");
+  ^
+testcode.c: In function 'main':
+testcode.c:3:9: warning: zero-length gnu_printf format string [-Wformat-zero-length]
+  printf("");
+         ^
