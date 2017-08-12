@@ -9,16 +9,19 @@ def learn(request):
     all_courses = Course.objects.all()
     return render(request, 'learn/learn.html', {'all_courses': all_courses})
 
-def course_detail(request, pk):
-    course = Course.objects.get(course_name=pk) #get_object_or_404(Course)
+def course_detail(request, course_url):
+    course = Course.objects.get(course_url=course_url)
     all_lessons = Lesson.objects.filter(course=course)
-    proportion = ToLearn.objects.get(course=course).lesson_num / course.total_lesson
+    set_user = ToLearn.objects.filter(course=course)
+    current_user = Profile.objects.get(user=request.user)
+    proportion = set_user.get(user=current_user).lesson_num / course.total_lesson
     return render(request, 'learn/course_detail.html',{'course': course, "all_lessons": all_lessons, "proportion": proportion})
 
+'''
 @login_required
 def course1(request):
     return render(request, 'learn/course_base.html')
-
+'''
 @login_required
 def lesson(request, lid):
     lesson = Lesson.objects.get(pk=lid)
@@ -34,4 +37,3 @@ def lesson(request, lid):
     else:
         form = SubmissionForm()
         return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
-

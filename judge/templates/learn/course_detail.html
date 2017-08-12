@@ -10,7 +10,11 @@
                 Course name: {{ course.course_name }}
             </h1>
         </div>
-
+        {% if user.is_authenticated %}
+        <em>welcome! {{ user.username }}</em>
+        {% else %}
+        <em>not log in</em>
+        {% endif %}
 
         <hr/>
 
@@ -30,14 +34,15 @@
 
         <div>
             <h1>All lessons</h1>
-            <ol>
+            <ul>
                 {% for each_lesson in all_lessons %}
-                <li>Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</li>
+                <li><a href="{% url 'lesson' lesson_url=each_lesson.lesson_url lesson_num=each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
                 {% endfor %}
-            </ol>
+            </ul>
         </div>
 
         <div>
+            {% if user.is_authenticated %}
             <h1>proportion</h1>
             <button >show proportion: {{ proportion }}</button>
             <script>
@@ -49,6 +54,7 @@
                     console.log(total_lesson);
                 }
             </script>
+            {% endif %}
         </div>
     </body>
 

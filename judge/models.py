@@ -18,11 +18,16 @@ class Course(models.Model):
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
     total_lesson = models.IntegerField(default=0)
+    course_url = models.CharField(max_length=255)
+    def __str__(self):
+        return self.course_name
+
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
+    lesson_url = models.CharField(max_length=255)
     learn = models.TextField()
     instructions = models.TextField()
     hint = models.TextField()
