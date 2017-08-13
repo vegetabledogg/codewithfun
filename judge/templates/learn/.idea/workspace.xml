@@ -13,12 +13,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="course_detail.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/course_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="38" column="90" lean-forward="false" selection-start-line="38" selection-start-column="90" selection-end-line="38" selection-end-column="90" />
+            <state relative-caret-position="450">
+              <caret line="30" column="14" lean-forward="true" selection-start-line="30" selection-start-column="14" selection-end-line="30" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -81,7 +81,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -94,6 +93,7 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -124,12 +124,13 @@
       <option name="presentableId" value="Default" />
       <updated>1502432176367</updated>
       <workItem from="1502432178724" duration="1256000" />
-      <workItem from="1502524515402" duration="10947000" />
+      <workItem from="1502524515402" duration="11421000" />
+      <workItem from="1502589108020" duration="496000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12203000" />
+    <option name="totallyTimeSpent" value="13173000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="4" y="23" width="1436" height="877" extended-state="6" />
@@ -164,6 +165,30 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/course_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/learn.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="50" lean-forward="true" selection-start-line="6" selection-start-column="50" selection-end-line="6" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="7" lean-forward="true" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/base.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -182,8 +207,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/course_detail.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="38" column="90" lean-forward="false" selection-start-line="38" selection-start-column="90" selection-end-line="38" selection-end-column="90" />
+        <state relative-caret-position="450">
+          <caret line="30" column="14" lean-forward="true" selection-start-line="30" selection-start-column="14" selection-end-line="30" selection-end-column="14" />
           <folding />
         </state>
       </provider>

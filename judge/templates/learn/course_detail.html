@@ -36,7 +36,7 @@
             <h1>All lessons</h1>
             <ul>
                 {% for each_lesson in all_lessons %}
-                <li><a href="{% url 'lesson' lesson_url=each_lesson.lesson_url lesson_num=each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
+                <li><a href="{% url 'lesson' course_url=course.course_url lesson_url=each_lesson.lesson_url lesson_num=each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
                 {% endfor %}
             </ul>
         </div>

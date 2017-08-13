@@ -48,9 +48,5 @@ def lesson(request, course_url, lesson_url, lesson_num):
             return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': sub, 'course_url': course_url})
     else:
         form = SubmissionForm()
-<<<<<<< HEAD
-        return render(request, 'learn/lesson.html', {'lesson': lesson, 'form': form})
-=======
         return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'course_url': course_url})
 
->>>>>>> 8af95fa3cb810391a7e7a1bc873fb938739a3300
