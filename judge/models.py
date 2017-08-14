@@ -48,11 +48,7 @@ class Submission(models.Model):
     status = models.CharField(max_length=8, default='')
     result = models.TextField(default='')
 
-class ToLearn(models.Model):
-    user = models.ForeignKey('accounts.Profile')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    lesson_num = models.IntegerField()
-
 class HaveLearned(models.Model):
     user = models.ForeignKey('accounts.Profile')
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)

@@ -46,7 +46,7 @@ def evaluate_submission(submission_id):
         if language == 'C':
             compile_status = subprocess.call(['docker', 'exec', container_id, compiler, '-std=c99', src_filename, '-o', exe_filename], stderr=user_errfile)
         elif language == 'C++':
-            compile_status = subprocess.call(['docker', 'exec', container_id, compiler, '-std=c99', src_filename, '-o', exe_filename], stderr=user_errfile)
+            compile_status = subprocess.call(['docker', 'exec', container_id, compiler, '-std=c++11', src_filename, '-o', exe_filename], stderr=user_errfile)
         user_errfile.close()
         if compile_status != 0:
             user_errfile = open('useroutput/err.{}'.format(user_output_filename), 'r')
