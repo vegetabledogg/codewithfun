@@ -35,7 +35,7 @@ class Lesson(models.Model):
     time_limit = models.CharField(max_length=16)
     memory_limit = models.CharField(max_length=16)
     def __str__(self):
-        return str(self.lesson_num)
+        return str(self.lesson_name)
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)
