@@ -34,6 +34,8 @@ class Lesson(models.Model):
     language = models.CharField(max_length=32)
     time_limit = models.CharField(max_length=16)
     memory_limit = models.CharField(max_length=16)
+    def __str__(self):
+        return str(self.lesson_num)
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)

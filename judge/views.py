@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from judge.forms import SubmissionForm
 from accounts.models import Profile
-from judge.models import Lesson, Submission, ToLearn, Course
+from judge.models import Lesson, Submission, Course, HaveLearned
 from judge.tasks import evaluate_submission
 
 def learn(request):
@@ -12,16 +12,11 @@ def learn(request):
 def course_detail(request, course_url):
     course = Course.objects.get(course_url=course_url)
     all_lessons = Lesson.objects.filter(course=course)
-    set_user = ToLearn.objects.filter(course=course)
-    current_user = Profile.objects.get(user=request.user)
-    proportion = set_user.get(user=current_user).lesson_num / course.total_lesson
+    set_user = HaveLearned.objects.filter(course=course)
+    current_user = Profile.objects.filter(user=request.user)
+    proportion = set_user.filter(user=current_user).count() / course.total_lesson
     return render(request, 'learn/course_detail.html',{'course': course, "all_lessons": all_lessons, "proportion": proportion})
 
-'''
-@login_required
-def course1(request):
-    return render(request, 'learn/course_base.html')
-'''
 @login_required
 def lesson(request, course_url, lesson_url, lesson_num):
     lesson = Lesson.objects.get(lesson_url=lesson_url, lesson_num=lesson_num)
