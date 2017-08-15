@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>dj girls</title>
+    <title>Code With Fun</title>
 </head>
+
 <body>
-    {% block content %}
-    {% endblock %}
+    <header>
+        <h1><a href="{% url 'learn' %}">Code With Fun</a></h1>
+        {% if user.is_authenticated %} 
+            Hi {{ user.username }}!
+            <a href="{% url 'logout' %}">logout</a> 
+        {% else %}
+            <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a> 
+        {% endif %}
+    </header>
+    <hr>
+    <main>
+        {% block content %} {% endblock %}
+    </main>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import Profile
+import copy
 
 def in_upload_path(instance, filename):
     """ Function to return upload path for test case input file"""
@@ -18,7 +19,6 @@ class Course(models.Model):
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
     total_lesson = models.IntegerField(default=0)
-    course_url = models.CharField(max_length=255)
     def __str__(self):
         return self.course_name
 
@@ -26,7 +26,6 @@ class Course(models.Model):
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
-    lesson_url = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
     learn = models.TextField()
     instructions = models.TextField()

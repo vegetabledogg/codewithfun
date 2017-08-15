@@ -1,6 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'learn/base.html' %}
 
 {% block content %}
+    <a href="{% url 'course_detail' course_url %}">
+        {{ lesson.course.course_name }}
+    </a>
     <h1>
         {{ lesson.lesson_name }}
     </h1>
@@ -25,7 +28,7 @@
         status
         {{ sub.status }}
     </p>
-    {% if next_lesson.lesson_num <= lesson.course.total_lesson %}
+    {% if next_lesson %}
         <a href="{% url 'lesson' course_url next_lesson.lesson_url next_lesson.lesson_num %}">next lesson</a>
     {% else %}
         <a herf="">next lesson</a>

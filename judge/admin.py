@@ -7,6 +7,11 @@ class CourseAdmin(admin.ModelAdmin):
 
 class LessonAdmin(admin.ModelAdmin):
     model = Lesson
+    fieldsets = [
+        (None, {'fields': ['course']}),
+        ('Content', {'fields': ['lesson_name', 'lesson_num', 'learn', 'instructions', 'hint']}),
+        ('Constraints', {'fields': ['language', 'time_limit', 'memory_limit']})
+    ]
     list_display = ['course', 'lesson_name','lesson_num']
 
 class HaveLearnedAdmin(admin.ModelAdmin):
