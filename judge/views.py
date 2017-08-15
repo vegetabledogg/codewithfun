@@ -4,8 +4,6 @@ from judge.forms import SubmissionForm
 from accounts.models import Profile
 from judge.models import Lesson, Submission, Course, HaveLearned
 from judge.tasks import evaluate_submission
-from .admin import LessonAdmin
-import copy
 
 class CourseWithUrl(Course):
     def __init__(self, course):
@@ -73,30 +71,11 @@ def lesson(request, course_url, lesson_url, lesson_num):
                 havelearned = HaveLearned()
                 havelearned.course = lesson.course
                 havelearned.lesson = lesson
-                havelearned.user = request.user
+                havelearned.user = submission.submitter
                 havelearned.save()
             return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': sub, 'course_url': course_url})              
     else:
         form = SubmissionForm()
     return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'course_url': course_url})
-'''
-def add_lesson(request):
-    if request.method == 'POST':
-        form = LessonAdmin(request.POST)
-        if form.is_valid():
-            lesson = Lesson()
-            lesson.course = form.cleaned_data['course']
-            lesson.lesson_name = form.cleaned_data['lesson_name']
-            lesson.lesson_num = form.cleaned_data['lesson_num']
-            lesson.learn = form.cleaned_data['learn']
-            lesson.instructions = form.cleaned_data['instructions']
-            lesson.hint = form.cleaned_data['hint']
-            lesson.language = form.cleaned_data['language']
-            lesson.time_limit = form.cleaned_data['time_limit']
-            lesson.memory_limit = form.cleaned_data['memory_limit']
-            lesson.course.total_lesson += 1
-            lesson.save()
-            return ()
-    else:
-        form = LessonAdmin()
-        return '''
+
+

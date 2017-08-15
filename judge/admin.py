@@ -4,6 +4,7 @@ from judge.models import Course, Lesson, Testcase, HaveLearned
 class CourseAdmin(admin.ModelAdmin):
     model = Course
     list_display = ['course_name']
+    exclude = ['total_lesson']
 
 class LessonAdmin(admin.ModelAdmin):
     model = Lesson
