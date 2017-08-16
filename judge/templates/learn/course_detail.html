@@ -1,20 +1,11 @@
-<html>
-    <head>
-        <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js">
-        </script>
-    </head>
+{% extends 'learn/base.html' %}
 
-    <body>
+{% block content %}
         <div>
             <h1>
                 Course name: {{ course.course_name }}
             </h1>
         </div>
-        {% if user.is_authenticated %}
-        <em>welcome! {{ user.username }}</em>
-        {% else %}
-        <em>not log in</em>
-        {% endif %}
 
         <hr/>
 
@@ -35,8 +26,8 @@
         <div>
             <h1>All lessons</h1>
             <ul>
-                {% for each_lesson in all_lessons %}
-                <li><a href="{% url 'lesson' course_url=course.course_url lesson_url=each_lesson.lesson_url lesson_num=each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
+                {% for each_lesson in lessons_with_url %}
+                <li><a href="{% url 'lesson' course.course_url each_lesson.lesson_url each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -56,6 +47,4 @@
             </script>
             {% endif %}
         </div>
-    </body>
-
-</html>
+{% endblock content %}

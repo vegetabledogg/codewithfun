@@ -7,3 +7,8 @@ class SubmissionForm(forms.ModelForm):
     class Meta:
         model = Submission
         fields = ['code']
+
+class LessonForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        exclude = []

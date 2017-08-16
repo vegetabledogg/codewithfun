@@ -18,24 +18,27 @@ class Course(models.Model):
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
     total_lesson = models.IntegerField(default=0)
-    course_url = models.CharField(max_length=255)
     def __str__(self):
         return self.course_name
 
 
 class Lesson(models.Model):
+    LANGUAGE_IN_LESSON_CHOICES = (
+        ('Python', 'Python'),
+        ('C', 'C'),
+        ('C++', 'C++')
+    )
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
-    lesson_url = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
     learn = models.TextField()
     instructions = models.TextField()
     hint = models.TextField()
-    language = models.CharField(max_length=32)
+    language = models.CharField(max_length=32, choices=LANGUAGE_IN_LESSON_CHOICES, default='C')
     time_limit = models.CharField(max_length=16)
     memory_limit = models.CharField(max_length=16)
     def __str__(self):
-        return str(self.lesson_num)
+        return str(self.lesson_name)
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)
@@ -52,5 +55,4 @@ class Submission(models.Model):
 
 class HaveLearned(models.Model):
     user = models.ForeignKey('accounts.Profile')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson)

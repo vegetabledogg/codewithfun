@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+<<<<<<< HEAD
 from accounts.models import Profile
 from judge.models import Lesson, Submission, Course, HaveLearned
 from accounts.forms import SignUpForm, EditForm
@@ -45,6 +46,10 @@ def learned_course(request):
         if each_leasson.course not in all_learned_courses:
             all_learned_courses.append(each_leasson.course)
     return render(request, 'learned_course.html', {'all_learned_courses': all_learned_courses})
+=======
+
+from accounts.forms import SignUpForm
+>>>>>>> e67a0a302b5aba5fb8e3a80a79d9122f3bc91293
 
 def signup(request):
     if request.method == 'POST':
@@ -56,7 +61,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('learn')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})

@@ -1,5 +1,9 @@
 # README
 
+如何将Django自带的管理界面和用户密码重置界面的Django Admin去掉http://www.cnblogs.com/alan-babyblog/p/5665353.html
+
+目前通过邮件找回密码的功能处于开发者模式，也就是说找回密码的邮件会发送至电脑终端，复制终端中显示的链接到浏览器即可重置密码。
+
 使用Python 3.6.0版本
 
 数据库配置
