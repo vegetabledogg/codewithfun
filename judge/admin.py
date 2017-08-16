@@ -21,6 +21,6 @@ class HaveLearnedAdmin(admin.ModelAdmin):
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
-admin.site.register(HaveLearned, HaveLearnedAdmin)
+#admin.site.register(HaveLearned, HaveLearnedAdmin)
 admin.site.register(Testcase)
 

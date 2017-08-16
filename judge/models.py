@@ -55,5 +55,4 @@ class Submission(models.Model):
 
 class HaveLearned(models.Model):
     user = models.ForeignKey('accounts.Profile')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson)

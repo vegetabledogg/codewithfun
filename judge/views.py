@@ -5,7 +5,7 @@ from accounts.models import Profile
 from judge.models import Lesson, Submission, Course, HaveLearned
 from judge.tasks import evaluate_submission
 
-class CourseWithUrl(Course):
+class CourseWithUrl:
     def __init__(self, course):
         self.course_name = course.course_name
         self.brief = course.brief
@@ -16,7 +16,7 @@ class CourseWithUrl(Course):
         self.total_lesson = course.total_lesson
         self.course_url = course.course_name.replace(' ', '$')
 
-class LessonWithUrl(Lesson):
+class LessonWithUrl:
     def __init__(self, lesson):
         self.lesson_name = lesson.lesson_name
         self.lesson_num = lesson.lesson_num
@@ -37,25 +37,32 @@ def learn(request):
 
 def course_detail(request, course_url):
     course_name = course_url.replace('$', ' ')
+    if request.user.is_authenticated():
+        current_user = Profile.objects.get(user=request.user)
+    else:
+        current_user = None
     course = Course.objects.get(course_name=course_name)
     lessons = Lesson.objects.filter(course=course)
-    all_lessons = []
+    lessons_with_url = []
+    count = 0
     for lesson in lessons:
-        all_lessons.append(LessonWithUrl(lesson))
-    set_user = HaveLearned.objects.filter(course=course)
-    current_user = Profile.objects.filter(user=request.user)
-    proportion = set_user.filter(user=current_user).count() / course.total_lesson
+        lessons_with_url.append(LessonWithUrl(lesson))
+        if current_user:
+            count += len(HaveLearned.objects.filter(user=current_user, lesson=lesson))
+    if course.total_lesson != 0:
+        proportion = count / course.total_lesson
+    else:
+        proportion = 0
     course = CourseWithUrl(course)
-    return render(request, 'learn/course_detail.html',{'course': course, "all_lessons": all_lessons, "proportion": proportion})
+    return render(request, 'learn/course_detail.html',{'course': course, "lessons_with_url": lessons_with_url, "proportion": proportion})
 
 @login_required
 def lesson(request, course_url, lesson_url, lesson_num):
     lesson_name = lesson_url.replace('$', ' ')
-    lesson = Lesson.objects.get(lesson_name=lesson_name, lesson_num=lesson_num)
-    next_lesson = Lesson.objects.filter(course=lesson.course, lesson_num=lesson.lesson_num+1)
-    if len(next_lesson) > 0:
-        next_lesson = LessonWithUrl(next_lesson[0])
-    else:
+    lesson = Lesson.objects.get(lesson_name=lesson_name, lesson_num=int(lesson_num))
+    try:
+        next_lesson = Lesson.objects.get(course=lesson.course, lesson_num=int(lesson.lesson_num)+1)
+    except:
         next_lesson = None
     if request.method == 'POST':
         form = SubmissionForm(request.POST)
@@ -69,7 +76,6 @@ def lesson(request, course_url, lesson_url, lesson_num):
             sub = Submission.objects.get(pk=submission.id)
             if sub.status == 'AC':
                 havelearned = HaveLearned()
-                havelearned.course = lesson.course
                 havelearned.lesson = lesson
                 havelearned.user = submission.submitter
                 havelearned.save()

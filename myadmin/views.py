@@ -1,6 +1,6 @@
-from codewithfun.forms import LessonForm
-from judge.models import Lesson
-from django.shortcuts import render, redirect
+from .forms import LessonForm
+from judge.models import Lesson, Course
+from django.shortcuts import render, redirect, get_object_or_404
 
 def add_lesson(request):
     if request.method == 'POST':
@@ -17,8 +17,16 @@ def add_lesson(request):
             lesson.time_limit = form.cleaned_data['time_limit']
             lesson.memory_limit = form.cleaned_data['memory_limit']
             lesson.course.total_lesson += 1
+            lesson.course.save()
             lesson.save()
             return redirect('/admin/')
     else:
         form = LessonForm()
     return render(request, 'admin/add_lesson.html', {'form': form})
+
+def delete_lesson(request, lesson_id):
+    lesson = get_object_or_404(Lesson, pk=lesson_id)
+    lesson.course.total_lesson -= 1
+    lesson.course.save()
+    lesson.delete()
+    return redirect('/admin/')
