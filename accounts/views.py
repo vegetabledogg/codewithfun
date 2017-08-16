@@ -1,15 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
 from accounts.models import Profile
 from judge.models import Lesson, Submission, Course, HaveLearned
 from accounts.forms import SignUpForm, EditForm
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
-@login_required
-def home(request):
-    return render(request, 'home.html')
 
 @login_required
 def edit(request):
@@ -18,7 +14,7 @@ def edit(request):
         form = EditForm(request.POST, instance=current_user.user) #加入修改后的信息
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('learn')
     else:
         form = EditForm(instance=current_user.user) #加载原始信息
     return render(request, 'edit.html', {'form': form})
@@ -29,7 +25,7 @@ def change_pwd(request):
         form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('learn')
         else:
             return render(request, 'change_pwd.html', {'form': form})
     else:
@@ -46,10 +42,6 @@ def learned_course(request):
         if each_leasson.course not in all_learned_courses:
             all_learned_courses.append(each_leasson.course)
     return render(request, 'learned_course.html', {'all_learned_courses': all_learned_courses})
-=======
-
-from accounts.forms import SignUpForm
->>>>>>> e67a0a302b5aba5fb8e3a80a79d9122f3bc91293
 
 def signup(request):
     if request.method == 'POST':

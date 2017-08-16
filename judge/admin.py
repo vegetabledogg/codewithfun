@@ -15,12 +15,8 @@ class LessonAdmin(admin.ModelAdmin):
     ]
     list_display = ['course', 'lesson_name','lesson_num']
 
-class HaveLearnedAdmin(admin.ModelAdmin):
-    model = HaveLearned
-    list_display = ['user', 'course', 'lesson']
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
-#admin.site.register(HaveLearned, HaveLearnedAdmin)
 admin.site.register(Testcase)
 
