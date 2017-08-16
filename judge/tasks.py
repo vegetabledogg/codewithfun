@@ -17,7 +17,7 @@ def evaluate_submission(submission_id):
     username = submission.submitter.user.username
     input_filename = testcase.inputfile.name.split('/')[1]
     memory_limit = lesson.memory_limit
-    time_limit = lesson.time_limit
+    time_limit = str(lesson.time_limit)
     language = lesson.language
     user_output_filename = '{}.{}.output'.format(username, submission_id)
     user_output_filepath = 'useroutput/{}'.format(user_output_filename)
@@ -52,6 +52,7 @@ def evaluate_submission(submission_id):
             user_errfile = open('useroutput/err.{}'.format(user_output_filename), 'r')
             result = user_errfile.read(32767)
             submission.result = result 
+            user_errfile.close()
             submission.status = 'CE'
         else:
             subprocess.call(["docker", "cp", 'run.py', "{}:/run.py".format(container_id)])
@@ -71,6 +72,7 @@ def evaluate_submission(submission_id):
             user_outputfile = open(user_output_filepath, 'r')
             result = user_outputfile.read(32767)
             submission.result = result
+            user_outputfile.close()
             os.remove(user_output_filepath)
     elif language == 'Python':
         src_filename = '{}.{}.py'.format(username, submission)
@@ -95,6 +97,7 @@ def evaluate_submission(submission_id):
         user_outputfile = open(user_output_filepath, 'r')
         result = user_outputfile.read(32767)
         submission.result = result
+        user_outputfile.close()
         os.remove(user_output_filepath)
     submission.save()
     # sub = Submission.objects.get(pk=submission_id)
