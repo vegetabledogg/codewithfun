@@ -5,7 +5,7 @@ from accounts.models import Profile
 from judge.models import Lesson, Submission, Course, HaveLearned
 from accounts.forms import SignUpForm, EditForm
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-
+from judge.views import CourseWithUrl
 
 @login_required
 def edit(request):
@@ -25,13 +25,10 @@ def change_pwd(request):
         form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('learn')
-        else:
-            return render(request, 'change_pwd.html', {'form': form})
+            return redirect('learn')  
     else:
         form = PasswordChangeForm(user=request.user)
-        args = {'form': form}
-        return render(request, 'change_pwd.html', args)
+    return render(request, 'change_pwd.html', {'form': form})
 
 @login_required
 def learned_course(request):
@@ -39,8 +36,8 @@ def learned_course(request):
     all_learned_lessons = HaveLearned.objects.filter(user=current_user)
     all_learned_courses = []
     for each_leasson in all_learned_lessons:
-        if each_leasson.course not in all_learned_courses:
-            all_learned_courses.append(each_leasson.course)
+        if each_leasson.lesson.course not in all_learned_courses:
+            all_learned_courses.append(CourseWithUrl(each_leasson.lesson.course))
     return render(request, 'learned_course.html', {'all_learned_courses': all_learned_courses})
 
 def signup(request):
