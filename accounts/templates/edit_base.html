@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Code With Fun{% endblock %}</title>
+</head>
+<body>
+<header>
+    <h1>Code With Fun</h1>
+    {% if user.is_authenticated %}
+    Hi {{ user.username }}!
+    <a href="{% url 'logout' %}">logout</a>
+    {% else %}
+    <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
+    {% endif %}
+    <a href="{% url 'edit' %}">edit</a>
+</header>
+<hr>
+<main>
+    <a href="{% url 'edit' %}">修改基本信息</a><br>
+    <a href="{% url 'edit_pwd' %}">修改密码</a><br>
+    <a href="{% url 'learned_course' %}">已学课程</a><br>
+    {% block content %}
+    {% endblock %}
+</main>
+<hr>
+</body>
+</html>
