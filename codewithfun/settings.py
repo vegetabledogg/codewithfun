@@ -119,4 +119,12 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Shanghai'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.126.com'                   
+EMAIL_PORT = 465                                
+EMAIL_HOST_USER = 'codewithfun@126.com'       
+EMAIL_HOST_PASSWORD = '********'                 
+EMAIL_SUBJECT_PREFIX = u'[CodeWithFun]'            
+EMAIL_USE_SSL = True 
+DEFAULT_FROM_EMAIL = 'codewithfun@126.com'
