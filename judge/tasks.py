@@ -1,6 +1,5 @@
 # from celery.decorators import task
 from judge.models import Submission, Lesson, Testcase
-from accounts.models import Profile
 from django.core.files import File
 import subprocess
 import os
@@ -14,7 +13,7 @@ def evaluate_submission(submission_id):
     # print(submission.id)
     lesson = submission.lesson
     testcase = Testcase.objects.get(lesson=lesson)
-    username = submission.submitter.user.username
+    username = submission.submitter.username
     input_filename = testcase.inputfile.name.split('/')[1]
     memory_limit = lesson.memory_limit
     time_limit = str(lesson.time_limit)

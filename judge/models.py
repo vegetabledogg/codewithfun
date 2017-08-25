@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import Profile
+from accounts.models import User
 
 def in_upload_path(instance, filename):
     """ Function to return upload path for test case input file"""
@@ -48,11 +48,11 @@ class Testcase(models.Model):
 class Submission(models.Model):
     lesson = models.ForeignKey(Lesson)
     submission_time = models.DateTimeField(auto_now_add=True)
-    submitter = models.ForeignKey('accounts.Profile')
+    submitter = models.ForeignKey('accounts.User')
     code = models.TextField()
     status = models.CharField(max_length=8, default='')
     result = models.TextField(default='')
 
 class HaveLearned(models.Model):
-    user = models.ForeignKey('accounts.Profile')
+    user = models.ForeignKey('accounts.User')
     lesson = models.ForeignKey(Lesson)

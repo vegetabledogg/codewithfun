@@ -1,16 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+def avatar_upload_path(instance, filename):
+    return '/'.join(['static', str(instance.id)]) + '.jpg'
+
+class User(AbstractUser):
+    avatar = ProcessedImageField(upload_to=avatar_upload_path, default='static/default.jpg', verbose_name='头像', processors=[ResizeToFill(85,85)])
 
     def __str__(self):
-        return self.user.username
-
-@receiver(post_save, sender=User)
-def update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-    instance.profile.save()
+        return self.username

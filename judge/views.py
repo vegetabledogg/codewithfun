@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from judge.forms import SubmissionForm
-from accounts.models import Profile
+from accounts.models import User
 from judge.models import Lesson, Submission, Course, HaveLearned
 from judge.tasks import evaluate_submission
 
-class CourseWithUrl:
+'''class CourseWithUrl:
     def __init__(self, course):
         self.course_name = course.course_name
         self.brief = course.brief
@@ -26,35 +26,33 @@ class LessonWithUrl:
         self.language = lesson.language
         self.memory_limit = lesson.memory_limit
         self.time_limit = lesson.time_limit
-        self.lesson_url = lesson.lesson_name.replace(' ', '$')
+        self.lesson_url = lesson.lesson_name.replace(' ', '$')'''
 
 def learn(request):
     courses = Course.objects.all()
-    all_courses = []
     for course in courses:
-        all_courses.append(CourseWithUrl(course))
-    return render(request, 'learn/learn.html', {'all_courses': all_courses})
+        course.course_url = course.course_name.replace(' ', '$')
+    return render(request, 'learn/learn.html', {'all_courses': courses})
 
 def course_detail(request, course_url):
     course_name = course_url.replace('$', ' ')
     if request.user.is_authenticated():
-        current_user = Profile.objects.get(user=request.user)
+        current_user = request.user
     else:
         current_user = None
     course = Course.objects.get(course_name=course_name)
     lessons = Lesson.objects.filter(course=course)
-    lessons_with_url = []
     count = 0
     for lesson in lessons:
-        lessons_with_url.append(LessonWithUrl(lesson))
         if current_user:
             count += len(HaveLearned.objects.filter(user=current_user, lesson=lesson))
+        lesson.lesson_url = lesson.lesson_name.replace(' ', '$')
     if course.total_lesson != 0:
         proportion = count / course.total_lesson
     else:
         proportion = 0
-    course = CourseWithUrl(course)
-    return render(request, 'learn/course_detail.html',{'course': course, "lessons_with_url": lessons_with_url, "proportion": proportion})
+    course.course_url = course.course_name.replace(' ', '$')
+    return render(request, 'learn/course_detail.html',{'course': course, "lessons_with_url": lessons, "proportion": proportion})
 
 @login_required
 def lesson(request, course_url, lesson_url, lesson_num):
@@ -62,6 +60,7 @@ def lesson(request, course_url, lesson_url, lesson_num):
     lesson = Lesson.objects.get(lesson_name=lesson_name, lesson_num=int(lesson_num))
     try:
         next_lesson = Lesson.objects.get(course=lesson.course, lesson_num=int(lesson.lesson_num)+1)
+        next_lesson.lesson_url = next_lesson.lesson_name.replace(' ', '$')
     except:
         next_lesson = None
     if request.method == 'POST':
@@ -70,7 +69,7 @@ def lesson(request, course_url, lesson_url, lesson_num):
             submission = Submission()
             submission.code = form.cleaned_data['code']
             submission.lesson = Lesson.objects.get(pk=lesson.id)
-            submission.submitter = Profile.objects.get(user=request.user)
+            submission.submitter = request.user
             submission.save()
             evaluate_submission(submission.id)
             sub = Submission.objects.get(pk=submission.id)

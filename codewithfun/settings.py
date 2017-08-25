@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'accounts',
     'judge',
-    'myadmin'
+    'myadmin',
+    'imagekit'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -104,11 +105,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    './avatar',
+)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = 'learn'
 
