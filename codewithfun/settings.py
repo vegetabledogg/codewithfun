@@ -108,11 +108,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
-    './avatar',
+    '/static/avatar',
 )
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 CKEDITOR_UPLOAD_PATH = "content"
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
