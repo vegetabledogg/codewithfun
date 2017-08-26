@@ -1,8 +1,0 @@
-{% extends 'admin/base.html' %}
-
-{% block content %}
-    <form method="POST">{% csrf_token %} 
-        {{ form.as_p }}
-        <button type="submit">save</button> 
-    </form>
-{% endblock content %}

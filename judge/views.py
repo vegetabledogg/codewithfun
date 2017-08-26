@@ -47,8 +47,8 @@ def course_detail(request, course_url):
         if current_user:
             count += len(HaveLearned.objects.filter(user=current_user, lesson=lesson))
         lesson.lesson_url = lesson.lesson_name.replace(' ', '$')
-    if course.total_lesson != 0:
-        proportion = count / course.total_lesson
+    if course.total_lesson() != 0:
+        proportion = count / course.total_lesson()
     else:
         proportion = 0
     course.course_url = course.course_name.replace(' ', '$')

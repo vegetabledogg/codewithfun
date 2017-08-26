@@ -37,8 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'accounts',
     'judge',
-    'myadmin',
-    'imagekit'
+    'imagekit',
+    'ckeditor',
+    'ckeditor_uploader'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,11 +111,17 @@ STATICFILES_DIRS = (
     './avatar',
 )
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+CKEDITOR_UPLOAD_PATH = "content"
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = 'learn'
+
+# celery配置
 
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
@@ -123,7 +130,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Shanghai'
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Django邮箱配置
 
 EMAIL_HOST = 'smtp.126.com'                   
 EMAIL_PORT = 465                                
@@ -132,3 +139,11 @@ EMAIL_HOST_PASSWORD = 'codewithfun2017'
 EMAIL_SUBJECT_PREFIX = u'[CodeWithFun]'            
 EMAIL_USE_SSL = True 
 DEFAULT_FROM_EMAIL = 'codewithfun@126.com'
+
+# 后台富文本编辑器配置
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+    },
+}

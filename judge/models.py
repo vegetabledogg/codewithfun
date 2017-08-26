@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from ckeditor.fields import RichTextField
 
 def in_upload_path(instance, filename):
     """ Function to return upload path for test case input file"""
@@ -12,17 +13,20 @@ def out_upload_path(instance, filename):
 
 class Course(models.Model):
     course_name = models.CharField(max_length=255)
-    brief = models.TextField()
-    overview = models.TextField()
+    brief = RichTextField()
+    overview = RichTextField()
     classification = models.CharField(max_length=32)
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
-    total_lesson = models.IntegerField(default=0)
+
     def __str__(self):
         return self.course_name
+    
+    def total_lesson(self):
+        return self.lesson_set.all().count()
 
 
-class Lesson(models.Model):
+class Lesson(models.Model): 
     LANGUAGE_IN_LESSON_CHOICES = (
         ('Python', 'Python'),
         ('C', 'C'),
@@ -31,9 +35,9 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
-    learn = models.TextField()
-    instructions = models.TextField()
-    hint = models.TextField()
+    learn = RichTextField()
+    instructions = RichTextField()
+    hint = RichTextField()
     language = models.CharField(max_length=32, choices=LANGUAGE_IN_LESSON_CHOICES, default='C')
     time_limit = models.CharField(max_length=16)
     memory_limit = models.CharField(max_length=16)
