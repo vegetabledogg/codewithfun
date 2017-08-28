@@ -9,7 +9,7 @@ class LessonAdmin(admin.ModelAdmin):
     model = Lesson
     fieldsets = [
         (None, {'fields': ['course']}),
-        ('Content', {'fields': ['lesson_name', 'lesson_num', 'learn', 'instructions', 'hint']}),
+        ('Content', {'fields': ['lesson_name', 'lesson_num', 'learn', 'instructions', 'hint', 'precode']}),
         ('Constraints', {'fields': ['language', 'time_limit', 'memory_limit']})
     ]
     list_display = ['course', 'lesson_name','lesson_num']

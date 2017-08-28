@@ -5,13 +5,14 @@ import subprocess
 import os
 
 # @task(name='evaluate_submission')
-def evaluate_submission(submission_id):
-    try:
+def evaluate_submission(submission, lesson):
+    submission_id = submission.id
+    '''try:
         submission = Submission.objects.get(pk=submission_id)
     except:
         print('ERROR: submission with id = %d not found' % (submission_id))
     # print(submission.id)
-    lesson = submission.lesson
+    lesson = submission.lesson'''
     testcase = Testcase.objects.get(lesson=lesson)
     username = submission.submitter.username
     input_filename = testcase.inputfile.name.split('/')[1]

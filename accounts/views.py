@@ -36,7 +36,7 @@ def learned_course(request):
     for each_leasson in all_learned_lessons:
         if each_leasson.lesson.course not in all_learned_courses:
             course = each_leasson.lesson.course
-            course.course_url = course.course_name.replace(' ', '$')
+            course.get_course_url()
             all_learned_courses.append(course)
     return render(request, 'learned_course.html', {'all_learned_courses': all_learned_courses})
 

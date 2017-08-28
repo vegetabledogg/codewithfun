@@ -15,7 +15,7 @@ class Course(models.Model):
     course_name = models.CharField(max_length=255)
     brief = RichTextField()
     overview = RichTextField()
-    classification = models.CharField(max_length=32)
+    classification = models.CharField(max_length=32) # 课程所属分类
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
 
@@ -24,6 +24,9 @@ class Course(models.Model):
     
     def total_lesson(self):
         return self.lesson_set.all().count()
+
+    def get_course_url(self):
+        self.course_url = self.course_name.replace(' ', '$')
 
 
 class Lesson(models.Model): 
@@ -39,10 +42,15 @@ class Lesson(models.Model):
     instructions = RichTextField()
     hint = RichTextField()
     language = models.CharField(max_length=32, choices=LANGUAGE_IN_LESSON_CHOICES, default='C')
-    time_limit = models.CharField(max_length=16)
-    memory_limit = models.CharField(max_length=16)
+    time_limit = models.CharField(max_length=16) # 解题代码时间限制
+    memory_limit = models.CharField(max_length=16) # 解题代码内存限制
+    precode = RichTextField() # 代码编辑区预设代码
+
     def __str__(self):
         return str(self.lesson_name)
+
+    def get_lesson_url(self):
+        self.lesson_url = self.lesson_name.replace(' ', '$')
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)
@@ -54,8 +62,8 @@ class Submission(models.Model):
     submission_time = models.DateTimeField(auto_now_add=True)
     submitter = models.ForeignKey('accounts.User')
     code = models.TextField()
-    status = models.CharField(max_length=8, default='')
-    result = models.TextField(default='')
+    status = models.CharField(max_length=8, default='') # 判题结果
+    result = models.TextField(default='') # 代码执行后的标准输出和标准错误
 
 class HaveLearned(models.Model):
     user = models.ForeignKey('accounts.User')
