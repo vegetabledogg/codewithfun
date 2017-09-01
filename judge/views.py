@@ -51,7 +51,8 @@ def lesson(request, course_url, lesson_url, lesson_num):
             data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
             if submission.status == 'AC':
                 HaveLearned.objects.get_or_create(user=submission.submitter, lesson=lesson)
-            return JsonResponse(data)              
+            #return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': submission, 'course_url': course_url})              
+            return JsonResponse(data)
     else:
         form = SubmissionForm(initial={'code': lesson.precode}) # 表单初始时在代码编辑区会显示预设代码
     return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'course_url': course_url})
