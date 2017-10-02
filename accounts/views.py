@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from accounts.models import User
-from judge.models import Lesson, Submission, Course, HaveLearned
+from learn.models import Lesson, Submission, Course, HaveLearned
 from accounts.forms import SignUpForm, EditForm
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 

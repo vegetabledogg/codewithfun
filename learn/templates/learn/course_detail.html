@@ -26,8 +26,8 @@
         <div>
             <h1>All lessons</h1>
             <ul>
-                {% for each_lesson in lessons_with_url %}
-                <li><a href="{% url 'lesson' course.course_url each_lesson.lesson_url each_lesson.lesson_num %}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
+                <!---->{% for each_lesson in lessons %}
+                <!----><li><a href="{{ each_lesson.get_absolute_url }}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
                 {% endfor %}
             </ul>
         </div>

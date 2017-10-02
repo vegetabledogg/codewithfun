@@ -10,9 +10,7 @@
     {% if user.is_authenticated %}
     Hi {{ user.username }}!
     <a href="{% url 'logout' %}">logout</a>
-
-    {% load staticfiles %}
-    <img src="/{{ user.avatar }}">
+    <!----><img src="/media/{{ user.avatar }}">
     {% else %}
     <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
     {% endif %}

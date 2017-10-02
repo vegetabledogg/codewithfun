@@ -29,7 +29,7 @@
         {{ sub.status }}
     </p>
     {% if next_lesson %}
-        <a href="{% url 'lesson' course_url next_lesson.lesson_url next_lesson.lesson_num %}">next lesson</a>
+        <!----><a href="{{ next_lesson.get_absolute_url }}">next lesson</a>
     {% else %}
         <a herf="">next lesson</a>
     {% endif %}

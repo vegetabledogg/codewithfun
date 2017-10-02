@@ -1,5 +1,5 @@
 # from celery.decorators import task
-from judge.models import Submission, Lesson, Testcase
+from .models import Submission, Lesson, Testcase
 from django.core.files import File
 import subprocess
 import os
