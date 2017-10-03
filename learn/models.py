@@ -12,12 +12,25 @@ def out_upload_path(instance, filename):
     """ Function to return upload path for test case output file"""
     return "/".join(["testcases", str(instance.lesson.id)]) + ".out"
 
+class Category(models.Model):
+    category_name = models.CharField(max_length=32, unique=True)
+    category_slug = models.SlugField(max_length=32, unique=True)
+
+    class Meta:
+        ordering = ['category_name']
+
+    def __str__(self):
+        return self.category_name
+
+    def get_absolute_url(self):
+        return reverse('learn_by_category', args=[self.category_slug])
+
 class Course(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) # 课程所属分类
     course_name = models.CharField(max_length=255, unique=True)
     course_slug = models.SlugField(max_length=255, unique=True, db_index=True)
     brief = RichTextField()
     overview = RichTextField()
-    classification = models.CharField(max_length=32) # 课程所属分类
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
 
@@ -40,7 +53,7 @@ class Lesson(models.Model):
         ('C++', 'C++')
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    lesson_name = models.CharField(max_length=255, unique=True)
+    lesson_name = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
     lesson_slug = models.SlugField(max_length=255, unique=True, db_index=True)
     learn = RichTextField()
@@ -49,7 +62,7 @@ class Lesson(models.Model):
     language = models.CharField(max_length=32, choices=LANGUAGE_IN_LESSON_CHOICES, default='C')
     time_limit = models.CharField(max_length=16) # 解题代码时间限制
     memory_limit = models.CharField(max_length=16) # 解题代码内存限制
-    precode = RichTextField() # 代码编辑区预设代码
+    precode = RichTextField(blank=True) # 代码编辑区预设代码
 
     class Meta:
         index_together = ['course', 'lesson_num']

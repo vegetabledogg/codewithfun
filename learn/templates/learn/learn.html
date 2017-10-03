@@ -1,6 +1,17 @@
 {% extends 'learn/base.html' %}
+<!---->{% load learn_tags %}
 
 {% block content %}
+    <!---->
+    课程分类
+    <ul>
+        <li><a href="{% url 'learn' %}">all</a></li>
+        {% get_all_categories as categories %}
+        {% for category in categories %}
+            <li><a href="{{ category.get_absolute_url }}">{{ category.category_name }}</a></li>
+        {% endfor %}
+    </ul>
+    <!---->
     <ul>
         {% for each_course in all_courses %}
 

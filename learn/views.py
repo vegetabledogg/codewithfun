@@ -2,11 +2,15 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from learn.forms import SubmissionForm
 from accounts.models import User
-from learn.models import Lesson, Submission, Course, HaveLearned
+from learn.models import Lesson, Submission, Course, HaveLearned, Category
 from learn.tasks import evaluate_submission
 
-def learn(request):
-    courses = Course.objects.all()
+def learn(request, category_url=None):
+    if category_url:
+        category = Category.objects.get(category_slug=category_url)
+        courses = Course.objects.filter(category=category)
+    else:
+        courses = Course.objects.all()
     return render(request, 'learn/learn.html', {'all_courses': courses})
 
 def course_detail(request, course_url):
@@ -34,6 +38,7 @@ def lesson(request, course_url, lesson_url):
         form = SubmissionForm(request.POST)
         if form.is_valid():
             submission = Submission(code=form.cleaned_data['code'], lesson=lesson, submitter=request.user)
+            submission.save()
             evaluate_submission(submission, lesson)
             #data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
             if submission.status == 'AC':

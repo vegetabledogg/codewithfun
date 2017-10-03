@@ -1,5 +1,6 @@
 # from celery.decorators import task
 from .models import Submission, Lesson, Testcase
+from codewithfun.settings import MEDIA_ROOT
 from django.core.files import File
 import subprocess
 import os
@@ -7,12 +8,6 @@ import os
 # @task(name='evaluate_submission')
 def evaluate_submission(submission, lesson):
     submission_id = submission.id
-    '''try:
-        submission = Submission.objects.get(pk=submission_id)
-    except:
-        print('ERROR: submission with id = %d not found' % (submission_id))
-    # print(submission.id)
-    lesson = submission.lesson'''
     testcase = Testcase.objects.get(lesson=lesson)
     username = submission.submitter.username
     input_filename = testcase.inputfile.name.split('/')[1]
@@ -28,7 +23,7 @@ def evaluate_submission(submission, lesson):
     print(container_id)
     container_id = container_id[:len(container_id) - 1]
 
-    subprocess.call(["docker", "cp", testcase.inputfile.name, "{}:/{}".format(container_id, input_filename)])
+    subprocess.call(["docker", "cp", 'media/' + testcase.inputfile.name, "{}:/{}".format(container_id, input_filename)])
 
     if language == 'C' or language == 'C++':
         if language == 'C':
@@ -64,7 +59,7 @@ def evaluate_submission(submission, lesson):
             elif exe_status != 0:
                 submission.status = 'RE'
             else: 
-                diff = subprocess.call(['diff', testcase.outputfile.name, user_output_filepath])
+                diff = subprocess.call(['diff', 'media/' + testcase.outputfile.name, user_output_filepath])
                 if not diff:
                     submission.status = 'AC'
                 else:
@@ -75,6 +70,7 @@ def evaluate_submission(submission, lesson):
             user_outputfile.close()
             os.remove(user_output_filepath)
     elif language == 'Python':
+        user_errfile.close()
         src_filename = '{}.{}.py'.format(username, submission)
         src_filepath = 'submissions/{}'.format(src_filename)
         srcfile = open(src_filepath, 'w+')
@@ -89,20 +85,18 @@ def evaluate_submission(submission, lesson):
         elif exe_status != 0:
             submission.status = 'RE'
         else:
-            diff = subprocess.call(['diff', testcase.outputfile.name, user_output_filepath])
+            diff = subprocess.call(['diff', 'media/' + testcase.outputfile.name, user_output_filepath])
             if not diff:
                 submission.status = 'AC'
             else:
                 submission.status = 'WA'
+        print(submission.status)
         user_outputfile = open(user_output_filepath, 'r')
         result = user_outputfile.read(32767)
         submission.result = result
         user_outputfile.close()
         os.remove(user_output_filepath)
     submission.save()
-    # sub = Submission.objects.get(pk=submission_id)
-    # print(sub.result)
-    # print(sub.status)
 
     os.remove(src_filepath)
     os.remove('useroutput/err.{}'.format(user_output_filename))
