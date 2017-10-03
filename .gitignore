@@ -8,4 +8,3 @@ useroutput/
 *.pyc
 venv/
 db.sqlite3
-media/
