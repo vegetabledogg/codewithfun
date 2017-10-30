@@ -1,50 +1,48 @@
-{% extends 'learn/base.html' %}
-
-{% block content %}
-        <div>
-            <h1>
-                Course name: {{ course.course_name }}
-            </h1>
-        </div>
+{% extends 'learn/base.html' %} {% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <h1>
+            Course name: {{ course.course_name }}
+        </h1>
 
         <hr/>
 
-        <div>
-            <h1>Brief Introduction</h1>
-            <p><i><em>{{ course.brief }}</em></i></p>
-        </div>
+        <h1>Brief Introduction</h1>
+        <p>{% autoescape off %}{{ course.brief }}{% endautoescape %}</p>
 
         <hr/>
 
-        <div>
-            <h1>Overview</h1>
-            <p><i><em>{{ course.overview }}</em></i></p>
-        </div>
 
-        <hr/>
+        <h1>Overview</h1>
+        <p><i><em>{% autoescape off %}{{ course.overview }}{% endautoescape %}</em></i></p>
+    </div>
 
-        <div>
-            <h1>All lessons</h1>
-            <ul>
-                <!---->{% for each_lesson in lessons %}
-                <!----><li><a href="{{ each_lesson.get_absolute_url }}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
 
-        <div>
-            {% if user.is_authenticated %}
-            <h1>proportion</h1>
-            <button >show proportion: {{ proportion }}</button>
-            <script>
-                function count() {
-                    var checked_num = $("input[type=checkbox][name=course]:checked").length;
-                    var total_lesson = {{course.total_lesson}};
-                    document.getElementById("p").innerHTML=checked_num/total_lesson;
-                    console.log(checked_num);
-                    console.log(total_lesson);
-                }
-            </script>
-            {% endif %}
-        </div>
+
+    <div class="col-md-9">
+        <h1>All lessons</h1>
+        <ul class="list-group">
+            {% for each_lesson in lessons %}
+            <li class="list-group-item"><a href="{{ each_lesson.get_absolute_url }}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
+            {% endfor %}
+        </ul>
+
+
+
+        {% if user.is_authenticated %}
+        <h1>proportion</h1>
+        <button>show proportion: {{ proportion }}</button>
+        <script>
+            function count() {
+                var checked_num = $("input[type=checkbox][name=course]:checked").length;
+                var total_lesson = {{course.total_lesson}};
+                document.getElementById("p").innerHTML = checked_num / total_lesson;
+                console.log(checked_num);
+                console.log(total_lesson);
+            }
+        </script>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock content %}

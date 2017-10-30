@@ -4,7 +4,7 @@ from learn.forms import SubmissionForm
 from accounts.models import User
 from learn.models import Lesson, Submission, Course, HaveLearned, Category
 from learn.tasks import evaluate_submission
-
+from django.http import JsonResponse
 def learn(request, category_url=None):
     if category_url:
         category = Category.objects.get(category_slug=category_url)
@@ -40,10 +40,11 @@ def lesson(request, course_url, lesson_url):
             submission = Submission(code=form.cleaned_data['code'], lesson=lesson, submitter=request.user)
             submission.save()
             evaluate_submission(submission, lesson)
-            #data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
+            data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
             if submission.status == 'AC':
                 HaveLearned.objects.get_or_create(user=submission.submitter, lesson=lesson)
-            return render(request, 'learn/lesson.html', {'course_url': course_url, 'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': submission})              
+            
+            # return render(request, 'learn/lesson.html', {'course_url': course_url, 'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': submission})              
             return JsonResponse(data)
     else:
         form = SubmissionForm(initial={'code': lesson.precode}) # 表单初始时在代码编辑区会显示预设代码

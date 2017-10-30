@@ -96,6 +96,7 @@ def evaluate_submission(submission, lesson):
         submission.result = result
         user_outputfile.close()
         os.remove(user_output_filepath)
+    print(submission.status)
     submission.save()
 
     os.remove(src_filepath)
