@@ -4,7 +4,7 @@
 <h2>已学课程</h2>
 <ul>
     {% for each_learned_course in all_learned_courses %}
-    <li><a href="{% url 'course_detail' course_url=each_learned_course.course_url %}">{{ each_learned_course.course_name }}</a></li>
+    <li><a href="{{ each_learned_course.get_absolute_url }}">{{ each_learned_course.course_name }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}
