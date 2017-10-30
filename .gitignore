@@ -1,4 +1,6 @@
 .DS_Store
+.vscode
+.idea
 */.DS_Store
 __pycache__/
 migrations/
