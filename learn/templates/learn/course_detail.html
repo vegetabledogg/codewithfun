@@ -1,19 +1,19 @@
 {% extends 'learn/base.html' %} {% block content %}
 <div class="row">
     <div class="col-md-3">
-        <h1>
+        <h2>
             Course name: {{ course.course_name }}
-        </h1>
+        </h2>
 
         <hr/>
 
-        <h1>Brief Introduction</h1>
+        <h2>Brief Introduction</h2>
         <p>{% autoescape off %}{{ course.brief }}{% endautoescape %}</p>
 
         <hr/>
 
 
-        <h1>Overview</h1>
+        <h2>Overview</h2>
         <p><i><em>{% autoescape off %}{{ course.overview }}{% endautoescape %}</em></i></p>
     </div>
 

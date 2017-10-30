@@ -3,8 +3,8 @@
 {% load learn_tags %} {% block content %}
 <!---->
 <div class="row">
-    <nav class="col-sm-3 col-md-2 bg-light sidebar ">
-        <p class="pl-3">课程分类</p>
+    <nav class="col-sm-3 col-md-1 bg-light sidebar ">
+        <p class="pl-3 mb-0">课程分类</p>
         <ul class="nav flex-column nav-pills">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'learn' %}">all</a>
@@ -19,7 +19,7 @@
     
 
     <!---->
-    <div class="col-sm-9 col-md-10 ml-sm-auto ">
+    <div class="col-sm-9 col-md-11 ml-sm-auto">
         <div>
             {% for each_course in all_courses %} {% if forloop.counter0|divisibleby:3 %}
         </div>

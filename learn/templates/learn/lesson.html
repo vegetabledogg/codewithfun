@@ -1,13 +1,14 @@
 
 {% extends 'learn/base.html' %} {% block content %}
-<a href="{% url 'course_detail' course_url %}">
-        {{ lesson.course.course_name }}
-    </a>
+
 <div class="row">
     <div class="col-md-3">
-        <h1>
+        <a href="{% url 'course_detail' course_url %}">
+            {{ lesson.course.course_name }}
+        </a>
+        <h2>
             {{ lesson.lesson_name }}
-        </h1>
+        </h2>
         <p>
             {% autoescape off %}{{ lesson.learn }}{% endautoescape %}
         </p>
@@ -23,7 +24,7 @@
             {% csrf_token %}
             <div>
 
-                <label for="{{ form.code.id_for_label }}"></label> 
+                <label for="{{ form.code.id_for_label }}" style="display:none"></label> 
                 <textarea cols="40" id="id_code" name="code" rows="20"></textarea>
                 <script src="/static/codemirror/mode/clike/clike.js"></script>
                 <script type="text/javascript">
@@ -34,7 +35,8 @@
                         indentUnit: 4,
                         lineWrapping: true
                     });
-                    editor.setSize('auto','auto');
+                    editor.setSize('auto','50rem');
+                    
                 </script>
                 <button class="btn" data-toggle="modal" data-target="#id_modal" id="runid" type="submit">run</button>
                 <div class="{%if form.code.errors %}error{%endif%}">{{ form.code.errors }}</div>
