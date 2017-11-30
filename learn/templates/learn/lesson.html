@@ -1,36 +1,132 @@
-{% extends 'learn/base.html' %}
 
-{% block content %}
-    <a href="{% url 'course_detail' course_url %}">
-        {{ lesson.course.course_name }}
-    </a>
-    <h1>
-        {{ lesson.lesson_name }}
-    </h1>
-    <p>
-        {{ lesson.learn }}
-    </p>
-    <p>
-        {{ lesson.instructions }}
-    </p>
-    <p>
-        {{ lesson.hint }}
-    </p>
-    <form method="POST">{% csrf_token %} 
-        {{ form.as_p }}
-        <button type="submit">submit</button> 
-    </form>
-    <p>
-        result
-        {{ sub.result|linebreaks }}
-    </p>
-    <p>
-        status
-        {{ sub.status }}
-    </p>
-    {% if next_lesson %}
-        <!----><a href="{{ next_lesson.get_absolute_url }}">next lesson</a>
-    {% else %}
-        <a herf="">next lesson</a>
-    {% endif %}
-{% endblock content %}
+{% extends 'learn/base.html' %} {% block content %}
+
+<div class="row">
+    <div class="col-md-3">
+        <a href="{% url 'course_detail' course_url %}">
+            {{ lesson.course.course_name }}
+        </a>
+        <h2>
+            {{ lesson.lesson_name }}
+        </h2>
+        <p>
+            {% autoescape off %}{{ lesson.learn }}{% endautoescape %}
+        </p>
+        <p>
+            {% autoescape off %}{{ lesson.instructions }}{% endautoescape %}
+        </p>
+        <p>
+            {% autoescape off %}{{ lesson.hint }}{% endautoescape %}
+        </p>
+    </div>
+    <div class="col-md-9">
+        <form method="POST" id="id_form">
+            {% csrf_token %}
+            <div>
+
+                <label for="{{ form.code.id_for_label }}" style="display:none"></label> 
+                <textarea cols="40" id="id_code" name="code" rows="20"></textarea>
+                <script src="/static/codemirror/mode/clike/clike.js"></script>
+                <script type="text/javascript">
+                    var editor = CodeMirror.fromTextArea(document.getElementById("id_code"), {
+                        mode: "text/x-csrc",
+                        lineNumbers: true,
+                        theme: "dracula",
+                        indentUnit: 4,
+                        lineWrapping: true
+                    });
+                    editor.setSize('auto','50rem');
+                    
+                </script>
+                <button class="btn" data-toggle="modal" data-target="#id_modal" id="runid" type="submit">run</button>
+                <div class="{%if form.code.errors %}error{%endif%}">{{ form.code.errors }}</div>
+            </div>
+        </form>
+        <div class="modal fade" id="id_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <!-- <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>  -->
+                    <div class="modal-body" id="id_modalcontent">
+                            <p>
+                                    result
+                                    {{ submission.result|linebreaks }}
+                                </p>
+                                <p>
+                                    status
+                                    {{ submission.status }}
+                                </p>
+                            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        
+                        <a type="button" href="{% if next_lesson %} { next_lesson.get_absolute_url } {% endif %}" class="btn btn-primary disabled" id="id_nextlesson">Next lesson</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+                //getting CSRF token
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+    
+                //AJAX post
+                $("#id_form").submit(function(e) {
+                    e.preventDefault();
+                    var csrftoken = getCookie('csrftoken');
+                    var code = $('#id_code').val();
+                    $.ajax({
+                        url: window.location.href,
+                        type: "POST",
+                        data: {
+                            csrfmiddlewaretoken: csrftoken,
+                            code: code
+                        },
+                        
+                        success: function(json) {
+                            console.log(json);
+                            var element=document.getElementById("id_modalcontent");
+                            if (json['status'] === undefined) {
+                                element.innerHTML = 'Make another try!';
+                                
+                            }
+                            else if (json['status'] == 'AC') {
+                                element.innerHTML = 'Good Job!';
+                                if (json['next_lesson']) {
+                                    var btn = document.getElementById("id_nextlesson");
+                                    btn.removeClass("disabled");
+                                }
+                                // element.innerHTML = 'staus: ' + json['status'] + '<br>result: '+json['result'];
+                            }
+                            else {
+                                element.innerHTML = 'Make another try!';
+                            }
+                            
+                        },
+    
+                        error: function(xhr, errmsg, err) {
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                });
+            </script>
+    </div>
+</div> {% endblock content %}

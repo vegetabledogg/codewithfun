@@ -1,24 +1,59 @@
 {% extends 'learn/base.html' %}
-<!---->{% load learn_tags %}
+<!---->
+{% load learn_tags %} {% block content %}
+<!---->
+<div class="row">
+    <nav class="col-sm-3 col-md-1 bg-light sidebar ">
+        <p class="pl-3 mb-0">课程分类</p>
+        <ul class="nav flex-column nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'learn' %}">all</a>
+            </li>
+            {% get_all_categories as categories %} {% for category in categories %}
+            <li class="nav-item">
+                <a class="nav-link" aria-selected="false" href="{{ category.get_absolute_url }}">{{ category.category_name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    
 
-{% block content %}
     <!---->
-    课程分类
-    <ul>
-        <li><a href="{% url 'learn' %}">all</a></li>
-        {% get_all_categories as categories %}
-        {% for category in categories %}
-            <li><a href="{{ category.get_absolute_url }}">{{ category.category_name }}</a></li>
-        {% endfor %}
-    </ul>
-    <!---->
-    <ul>
-        {% for each_course in all_courses %}
+    <div class="col-sm-9 col-md-11 ml-sm-auto">
+        <div>
+            {% for each_course in all_courses %} {% if forloop.counter0|divisibleby:3 %}
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <a class="card link-hover" href="{{ each_course.get_absolute_url }}">
+                    <img class="card-img-top">
+                    <div class="card-body">
+                        <h3 class="card-title">{{each_course.course_name}}</h3>
+                        <p class="card-text">
+                            {% autoescape off %} {{each_course.brief}} {% endautoescape %}
+                        </p>
+                        <p class="card-text">
+                            {% autoescape off %} {{each_course.overview|cut:" "}} {% endautoescape %}
+                        </p>
+                    </div>
+                </a>
+            </div>
 
-        <!----><li><a href="{{ each_course.get_absolute_url }}">Course name: {{each_course.course_name}}</a></li>
-        <p>{{each_course.brief}}</p>
-        <p>{{each_course.overview|cut:" "}}</p>
-        <hr/>
-        {% endfor %}
-    </ul>
+            {% else %}
+            <div class="col-md-4">
+                <a class="card link-hover" href="{{ each_course.get_absolute_url }}">
+                    <img class="card-img-top">
+                    <div class="card-body">
+                        <h3 class="card-title">{{each_course.course_name}}</h3>
+                        <p class="card-text">{% autoescape off %}{{each_course.brief}}{% endautoescape %}</p>
+
+                        <p class="card-text">{% autoescape off %}{{each_course.overview|cut:" "}}{% endautoescape %}</p>
+                    </div>
+                </a>
+            </div>
+            {% endif %} {% endfor %}
+            <!---->
+        </div>
+    </div>
+</div>
 {% endblock content %}
