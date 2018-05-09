@@ -15,8 +15,6 @@ body {
     background: #fff;
 }
 
-
-
 h1,
 h2,
 h3,
@@ -25,6 +23,7 @@ h5,
 h6,
 figure {
     color: #000;
+    word-wrap: break-word;
     font-family: "Work Sans", Arial, sans-serif;
     font-weight: 400;
     margin: 0 0 20px 0;
@@ -89,7 +88,7 @@ li {
     bottom: 0;
     z-index: 1000;
     padding: 1.5rem 0;
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: auto;
     border-right: 1px solid #eee;
 }

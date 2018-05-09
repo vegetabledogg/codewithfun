@@ -1,4 +1,3 @@
-
 {% extends 'learn/base.html' %} {% block content %}
 
 <div class="row">
@@ -18,6 +17,7 @@
         <p>
             {% autoescape off %}{{ lesson.hint }}{% endautoescape %}
         </p>
+
     </div>
     <div class="col-md-9">
         <form method="POST" id="id_form">
@@ -35,11 +35,11 @@
                         indentUnit: 4,
                         lineWrapping: true
                     });
-                    editor.setSize('auto','50rem');
+                    editor.setSize('auto','40rem');
                     
                 </script>
                 <button class="btn" data-toggle="modal" data-target="#id_modal" id="runid" type="submit">run</button>
-                <div class="{%if form.code.errors %}error{%endif%}">{{ form.code.errors }}</div>
+                <div class="{% if form.code.errors %}error{% endif %}">{{ form.code.errors }}</div>
             </div>
         </form>
         <div class="modal fade" id="id_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -50,14 +50,19 @@
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>  -->
-                    <div class="modal-body" id="id_modalcontent">
-                            <p>
-                                    result
-                                    {{ submission.result|linebreaks }}
-                                </p>
+                    <div class="modal-body text-center" id="id_modalcontent">
                                 <p>
-                                    status
-                                    {{ submission.status }}
+                                    <span class="text-info">Result: </span>
+                                    <span id="result">
+                                    {{ submission.result|linebreaks }}
+                                    </span>
+                                </p>
+                                
+                                <p>
+                                    <!-- status -->
+                                    <div id="status">
+                                    &nbsp;{{ submission.status }}&nbsp;
+                                    </div>
                                 </p>
                             
                     </div>
@@ -70,7 +75,12 @@
                 </div>
             </div>
         </div>
-        
+        <script>
+            $["#id_form"].submit(function(){
+                $["#result"].text("");
+                $["#status"].text("");
+            });
+        </script>
         <script>
                 //getting CSRF token
                 function getCookie(name) {
@@ -93,6 +103,8 @@
                     e.preventDefault();
                     var csrftoken = getCookie('csrftoken');
                     var code = $('#id_code').val();
+                    $("#result").text(" ");
+                    $("#status").text(" ");
                     $.ajax({
                         url: window.location.href,
                         type: "POST",
@@ -103,13 +115,14 @@
                         
                         success: function(json) {
                             console.log(json);
-                            var element=document.getElementById("id_modalcontent");
+                            var s=document.getElementById("status");
+                            var r=document.getElementById("result");
+                            r.innerHTML=json['result'];
                             if (json['status'] === undefined) {
-                                element.innerHTML = 'Make another try!';
-                                
+                                s.innerHTML = 'Make another try!';
                             }
                             else if (json['status'] == 'AC') {
-                                element.innerHTML = 'Good Job!';
+                                s.innerHTML = 'Good Job!';
                                 if (json['next_lesson']) {
                                     var btn = document.getElementById("id_nextlesson");
                                     btn.removeClass("disabled");
@@ -117,7 +130,7 @@
                                 // element.innerHTML = 'staus: ' + json['status'] + '<br>result: '+json['result'];
                             }
                             else {
-                                element.innerHTML = 'Make another try!';
+                                s.innerHTML = 'Make another try!';
                             }
                             
                         },

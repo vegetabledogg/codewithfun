@@ -50,7 +50,7 @@ def evaluate_submission(submission, lesson):
             user_errfile.close()
             submission.status = 'CE'
         else:
-            subprocess.call(["docker", "cp", 'run.py', "{}:/run.py".format(container_id)])
+            subprocess.call(["docker", "cp", 'learn/run.py', "{}:/run.py".format(container_id)])
             exe_status = subprocess.call(['docker', 'exec', container_id, 'python3', 'run.py', exe_filename, input_filename, user_output_filename, time_limit])  
             print(exe_status)
             subprocess.call(["docker", "cp", "{}:/{}".format(container_id, user_output_filename), user_output_filepath])  
@@ -77,7 +77,7 @@ def evaluate_submission(submission, lesson):
         print(submission.code, file=srcfile)
         srcfile.close()
         subprocess.call(["docker", "cp", src_filepath, "{}:/{}".format(container_id, src_filename)])
-        subprocess.call(["docker", "cp", 'runpy.py', "{}:/runpy.py".format(container_id)])
+        subprocess.call(["docker", "cp", 'learn/runpy.py', "{}:/runpy.py".format(container_id)])
         exe_status = subprocess.call(['docker', 'exec', container_id, 'python3', 'runpy.py', src_filename, input_filename, user_output_filename, time_limit])
         subprocess.call(["docker", "cp", "{}:/{}".format(container_id, user_output_filename), user_output_filepath])
         if exe_status == 124:
