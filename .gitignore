@@ -9,3 +9,4 @@ useroutput/*
 venv/
 db.sqlite3
 media/*
+.vscode
