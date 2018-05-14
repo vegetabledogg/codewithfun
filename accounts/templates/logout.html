@@ -1,9 +1,16 @@
-{% extends 'base.html' %}
+
+{% extends 'edit_base.html' %}
 
 {% block title %}See you!{% endblock %}
 
 {% block content %}
-  <h2>Logged out</h2>
-  <p>You have been successfully logged out.</p>
-  <p><a href="{% url 'login' %}">Log in</a> again.</p>
+
+<div class="modal-body mb-0">
+  
+  <p>您已成功退出！</p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" data-dismiss="modal">确定</button>
+</div>
+
 {% endblock %}

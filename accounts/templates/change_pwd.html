@@ -1,21 +1,61 @@
-{% extends 'edit_base.html' %}
+{% extends 'learn/base.html' %}
 
 {% block content %}
-<h2>Change password</h2>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    <p>
-        {{ field.label_tag }}<br>
-        {{ field }}
-        {% if field.help_text %}
-        <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-    <p style="color: red">{{ error }}</p>
-    {% endfor %}
-    </p>
-    {% endfor %}
-    <button type="submit">确定修改</button>
-</form>
+<div class="container mt-5">
+    <h3 class="text-center mb-5">修改密码</h3>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="list-group no-radius">
+                <a href="{% url 'edit' %}" class="no-radius list-group-item list-group-item-action ">
+                    修改基本信息
+                </a>
+                <a href="{% url 'edit_pwd' %}" class="no-radius list-group-item list-group-item-action btn-primary active">
+                    修改密码
+                </a>
+                <a data-toggle="modal" data-title="退出登录" data-remote="{% url 'logout' %}" href="" data-target="#logoutModal" class="no-radius list-group-item list-group-item-action">
+                    退出登录
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            <form method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_old_password">旧密码</label>
+                    <input id="id_old_password" name="old_password" class="no-radius form-control {% if form.old_password.errors %} is-invalid {% endif %}" type="password">
+                    <div id="old_password_feedback" class="invalid-feedback d-block">
+                        {% for error in form.old_password.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_new_password1">新密码</label><br>
+                    <input id="id_new_password1" class="form-control no-radius {% if form.new_password1.errors %} is-invalid {% endif %}" name="new_password1" type="password">  
+                    <div id="old_password_feedback" class="invalid-feedback d-block">
+                        {% for error in form.new_password1.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_new_password2">新密码确认</label><br>
+                    <input id="id_new_password2" class="form-control no-radius {% if form.new_password2.errors %} is-invalid {% endif %}" name="new_password2" type="password">  
+                    <div id="old_password_feedback" class="invalid-feedback d-block">
+                        {% for error in form.new_password2.errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <button type="submit" class="no-radius btn btn-primary">确定修改</button>
+                    
+            </form>
+            
+        </div>
+    </div>
+    
+    
+</div>
+
 {% endblock %}

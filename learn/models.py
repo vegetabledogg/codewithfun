@@ -29,7 +29,7 @@ class Course(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) # 课程所属分类
     course_name = models.CharField(max_length=255, unique=True)
     course_slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    brief = RichTextField()
+    brief = models.TextField()
     overview = RichTextField()
     release_date = models.DateTimeField(auto_now_add=True)
     course_auth = models.CharField(max_length=255, default='admin')
@@ -50,7 +50,8 @@ class Lesson(models.Model):
     LANGUAGE_IN_LESSON_CHOICES = (
         ('Python', 'Python'),
         ('C', 'C'),
-        ('C++', 'C++')
+        ('C++', 'C++'),
+        ('Java', 'Java')
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
@@ -62,7 +63,7 @@ class Lesson(models.Model):
     language = models.CharField(max_length=32, choices=LANGUAGE_IN_LESSON_CHOICES, default='C')
     time_limit = models.CharField(max_length=16) # 解题代码时间限制
     memory_limit = models.CharField(max_length=16) # 解题代码内存限制
-    precode = RichTextField(blank=True) # 代码编辑区预设代码
+    precode = models.TextField(blank=True) # 代码编辑区预设代码
 
     class Meta:
         index_together = ['course', 'lesson_num']
@@ -89,3 +90,8 @@ class Submission(models.Model):
 class HaveLearned(models.Model):
     user = models.ForeignKey('accounts.User')
     lesson = models.ForeignKey(Lesson)
+
+class TriedCourse(models.Model):
+    user = models.ForeignKey('accounts.User')
+    course = models.ForeignKey(Course)
+

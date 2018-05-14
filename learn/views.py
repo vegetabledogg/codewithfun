@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from learn.forms import SubmissionForm
 from accounts.models import User
-from learn.models import Lesson, Submission, Course, HaveLearned, Category
+from learn.models import Lesson, Submission, Course, HaveLearned, Category, TriedCourse
 from learn.tasks import evaluate_submission
 from django.http import JsonResponse
 def learn(request, category_url=None):
@@ -18,14 +18,25 @@ def course_detail(request, course_url):
     lessons = Lesson.objects.filter(course=course).order_by('lesson_num')
     proportion = 0
     current_user = request.user
+    all_learned_courses = []
+    current_lesson = None
     if request.user.is_authenticated():
+        tried_courses = TriedCourse.objects.filter(user=current_user)
+        for each_leasson in tried_courses:
+            all_learned_courses.append(each_leasson.course) 
         count = 0
         for lesson in lessons:
             count += len(HaveLearned.objects.filter(user=current_user, lesson=lesson))
         total_lesson = course.total_lesson()
+        
+            
         if total_lesson != 0:
             proportion = count / total_lesson
-    return render(request, 'learn/course_detail.html', {'course': course, "lessons": lessons, "proportion": proportion})
+            current_lesson = Lesson.objects.get(lesson_num=count)
+        if request.method == 'POST':
+            TriedCourse.objects.get_or_create(user=current_user, course=course)
+        
+    return render(request, 'learn/course_detail.html', {'course': course, "lessons": lessons, "proportion": proportion, 'all_learned_courses': all_learned_courses, 'current_lesson':current_lesson})
 
 @login_required
 def lesson(request, course_url, lesson_url):

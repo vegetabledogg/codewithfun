@@ -122,7 +122,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = 'learn'
-
+LOGIN_URL = 'learn'
 # celery配置
 
 BROKER_URL = 'redis://localhost:6379'

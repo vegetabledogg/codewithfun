@@ -2,10 +2,10 @@
 */.DS_Store
 __pycache__/
 migrations/
-testcases/
-submissions/
-useroutput/
+testcases/*
+submissions/*
+useroutput/*
 *.pyc
 venv/
 db.sqlite3
-media/
+media/*

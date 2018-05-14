@@ -1,21 +1,146 @@
-{% extends 'base.html' %}
+{% extends 'edit_base.html' %}
 
 {% block content %}
-  <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <p>
-        {{ field.label_tag }}<br>
-        {{ field }}
-        {% if field.help_text %}
-          <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-          <p style="color: red">{{ error }}</p>
-        {% endfor %}
-      </p>
-    {% endfor %}
-    <button type="submit">确定修改</button>
-  </form>
+
+<form id="signup_form" method="post" action="{% url 'signup' %}" novalidate>
+  {% csrf_token %}
+  <div class="modal-body form-group mb-0">
+    <label for="id_username" class="sr-only">用户名:</label>
+      
+    <div class="input-group">
+      <div class="input-group-addon">
+        <div class="input-group-text"><span style="width:1rem;" class="oi oi-person"></span></div>
+      </div>
+      <input id="id_username" class="form-control" maxlength="30" placeholder="请输入用户名" name="username" type="text" required>
+      
+    </div>
+    <div id="username_feedback" class="invalid-feedback">
+      </div>
+    <small class="form-text text-muted mb-1">必填，不多于30个字符，只能用字母、数字和字符 @.+-_</small>
+    
+    <label for="id_password1" class="sr-only">密码:</label>
+    <div class="input-group">
+      <div class="input-group-addon">
+        <div class="input-group-text"><span style="width:1rem;" class="oi oi-key"></span></div>
+      </div>
+      
+      <input id="id_password1" class="form-control" placeholder="请输入密码" name="password1" type="password" required>
+      
+    </div>
+    <div id="password1_feedback" class="invalid-feedback d-block">
+        &nbsp;
+      </div>
+
+
+    <label for="id_password2" class="sr-only">密码确认:</label>
+    <div class="input-group">
+      <div class="input-group-addon">
+        <div class="input-group-text"><span style="width:1rem;" class="oi oi-lock-locked"></span></div>
+      </div>
+      
+      <input id="id_password2" class="form-control" placeholder="为了校验，输入与上面相同的密码" name="password2" type="password" required>
+      
+    </div>
+    <div id="password2_feedback" class="invalid-feedback d-block">
+     &nbsp; </div>
+
+    <label for="id_email" class="sr-only">电子邮件地址:</label>
+    <div class="input-group">
+        <div class="input-group-addon">
+          <div class="input-group-text"><span style="width:1rem;" class="oi oi-envelope-closed"></span></div>
+        </div>
+        
+        <input id="id_email" class="form-control" placeholder="请输入电子邮件地址" maxlength="254" name="email" type="email" required>
+        
+      </div>
+      <div id="email_feedback" class="invalid-feedback d-block">
+        </div>  
+      
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-primary" type="submit">确定修改</button>
+
+  </div>
+</form>
+<script>
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+  
+    //AJAX post
+    $("#signup_form").submit(function(e) {
+      e.preventDefault();
+      var csrftoken = getCookie('csrftoken');
+      $('#username_feedback').html('');
+      $('#username_feedback').hide();
+      $('#id_username').removeClass('is-invalid');
+      $('#password1_feedback').html('&nbsp;');
+      $('#id_password1').removeClass('is-invalid');
+      $('#password2_feedback').html('&nbsp;');
+      $('#id_password2').removeClass('is-invalid');
+      $('#email_feedback').html('');
+      $('#id_email').removeClass('is-invalid');
+      $.ajax({
+          url: $(this).attr("action"),
+          type: "POST",
+          data: {
+              csrfmiddlewaretoken: csrftoken,
+              username: $('#id_username').val(),
+              password1: $('#id_password1').val(),
+              password2: $('#id_password2').val(),
+              email: $('#id_email').val()
+          },
+          
+          success: function(json) {
+              console.log(json);
+              if(json['status']=='success'){
+                
+                $('#signupModal').modal('hide');
+                location.reload();
+              }
+              else if(json['status'] == 'error'){
+                
+                switch(json['field']){
+                  
+                  case 'username':
+
+                    $('#username_feedback').html(json['error_message']);
+                    $('#username_feedback').show();
+                    $('#id_username').addClass('is-invalid');
+
+                  break;
+                  case 'password1':
+                    $('#password1_feedback').html(json['error_message']);
+                    $('#id_password1').addClass('is-invalid');
+                  break;
+                  case 'password2':
+                    $('#password2_feedback').html(json['error_message']);
+                    $('#id_password2').addClass('is-invalid');
+                    break;
+                  case 'email':
+                    $('#email_feedback').html(json['error_message']);
+                    $('#id_email').addClass('is-invalid');
+                  break;
+                }
+              }
+          },
+  
+          error: function(xhr, errmsg, err) {
+            //console.log("error");
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      });
+    });
+  </script>
 {% endblock %}

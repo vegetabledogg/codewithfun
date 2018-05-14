@@ -1,145 +1,302 @@
-{% extends 'learn/base.html' %} {% block content %}
+{% extends 'learn/base.html' %} 
+{% load learn_tags %} 
+{% block content %}
+<script>
+    $('#nav-container').removeClass('container');
+    $('#nav-container').addClass('d-flex');
+    $('#nav-container').addClass('w-100');
+</script>
+<div class="my-row lesson-wrapper">
+    <div class="my-col knowledge-wrapper">
+        <div class="knowledge">
+            <div class="learn-area" role="tablist">
+                <div class="card border-0">
+                    <div class="card-header bg-grey border-0 d-flex justify-content-between" role="tab" id="headingOne" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <a class="text-dark" href="#collapseOne" role="button" >
+                                Learn {{ lesson.course.course_name }}
+                            </a>
 
-<div class="row">
-    <div class="col-md-3">
-        <a href="{% url 'course_detail' course_url %}">
-            {{ lesson.course.course_name }}
-        </a>
-        <h2>
-            {{ lesson.lesson_name }}
-        </h2>
-        <p>
-            {% autoescape off %}{{ lesson.learn }}{% endautoescape %}
-        </p>
-        <p>
-            {% autoescape off %}{{ lesson.instructions }}{% endautoescape %}
-        </p>
-        <p>
-            {% autoescape off %}{{ lesson.hint }}{% endautoescape %}
-        </p>
+                        </h5>
+                        <div ><span class="oi oi-chevron-top align-middle" id="iconOne"></span></div>
+
+                    </div>
+                    
+                    <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="card-body border-0 pb-0">
+                            <h3>{{ lesson.lesson_name }}</h3>
+                            {% autoescape off %}{{ lesson.learn }}{% endautoescape %}
+
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="card border-0">
+                    <div class="card-header bg-grey border-0 d-flex justify-content-between" data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"role="tab" id="headingTwo">
+                        <h5 class="mb-0">
+                            <a class="text-dark" href="#collapseTwo" role="button" >
+                                Instructions                              
+                            </a>
+                        </h5>
+                        <div ><span class="oi oi-chevron-top align-middle" id="iconTwo"></span></div>
+
+                    </div>
+                    <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingTwo">
+                        <div class="card-body border-0 pb-0">
+                            {% autoescape off %}{{ lesson.instructions }}{% endautoescape %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0">
+                    <div class="card-header bg-grey border-0 d-flex justify-content-between" data-toggle="collapse" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree" role="tab" id="headingThree">
+                        <h5 class="mb-0">
+                            <a class="text-dark" href="#collapseThree" role="button">
+                                Hint                              
+                            </a>
+                        </h5>
+                        <div ><span class="oi oi-chevron-bottom align-middle" id="iconThree"></span></div>
+
+                    </div>
+                    <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                        <div class="card-body border-0 pb-0">
+                            {% autoescape off %}{{ lesson.hint }}{% endautoescape %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-0"></div>
+            </div>
+            <script>
+                function foldCard(c,i){
+                    function fold(){
+                        i.toggleClass('oi-chevron-bottom');
+                        i.toggleClass('oi-chevron-top');
+                    }
+                    c.on('show.bs.collapse',function(){
+                        fold();
+                    });
+                    c.on('hide.bs.collapse', function(){
+                        fold(); 
+                    });
+                }
+                foldCard($('#collapseOne'),$('#iconOne'));
+                foldCard($('#collapseTwo'),$('#iconTwo'));
+                foldCard($('#collapseThree'),$('#iconThree'));
+            </script>
+        </div>
+    </div>
+    <div class="my-col code-wrapper">
+        <div class="code-area">
+            <form method="POST" id="id_form">
+                {% csrf_token %}
+
+                <label for="{{ form.code.id_for_label }}" style="display:none"></label>
+                <textarea cols="40" id="id_code" name="code">{% autoescape off %}{{ lesson.precode }}{% endautoescape %}</textarea>
+                <script src="/static/codemirror/mode/clike/clike.js"></script>
+                <script src="/static/codemirror/mode/python/python.js"></script>
+                <div class="my-row">
+                    <button class="my-col no-radius btn btn-primary" id="runid" type="submit">Run</button>
+
+
+                    <a role="button" id="next" class="my-col no-radius text-light btn btn-secondary {% if next_lesson and user|have_learned:lesson %} {% else %} disabled {% endif %}" href="{{ next_lesson.get_absolute_url}}">Next</a>
+
+                </div>
+                <script type="text/javascript">
+                    var btnHeight = $("#runid").outerHeight();
+                    var lan = '{{ lesson.language }}';
+                    var mode = 'C';
+                    switch(lan){
+                        case 'C': mode='text/x-csrc'; break;
+                        case 'C++': mode="text/x-c++src"; break;
+                        case 'Java': mode="text/x-java"; break;
+                        case 'Python': mode="text/x-python"; break;
+                    }
+                    var editor = CodeMirror.fromTextArea(document.getElementById("id_code"), {
+                        mode: mode,
+                        lineNumbers: true,
+                        indentUnit: 4,
+                        lineWrapping: true,
+                        foldGutter: true,
+                        styleActiveLine: true,
+                        matchBrackets: true,
+                        cursorHeight: 0.85,
+                        theme: "solarized dark",
+                        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+                    });
+                    editor.setSize('auto', 'calc(100% - ' + btnHeight + 'px)');
+                    editor.setOption('fullScreen',true);
+                </script>
+
+
+                <div class="{% if form.code.errors %}error{% endif %}">{{ form.code.errors }}</div>
+            </form>
+        </div>
 
     </div>
-    <div class="col-md-9">
-        <form method="POST" id="id_form">
-            {% csrf_token %}
-            <div>
-
-                <label for="{{ form.code.id_for_label }}" style="display:none"></label> 
-                <textarea cols="40" id="id_code" name="code" rows="20"></textarea>
-                <script src="/static/codemirror/mode/clike/clike.js"></script>
-                <script type="text/javascript">
-                    var editor = CodeMirror.fromTextArea(document.getElementById("id_code"), {
-                        mode: "text/x-csrc",
-                        lineNumbers: true,
-                        theme: "dracula",
-                        indentUnit: 4,
-                        lineWrapping: true
-                    });
-                    editor.setSize('auto','40rem');
-                    
-                </script>
-                <button class="btn" data-toggle="modal" data-target="#id_modal" id="runid" type="submit">run</button>
-                <div class="{% if form.code.errors %}error{% endif %}">{{ form.code.errors }}</div>
+    <div class="my-col terminal-wrapper">
+        <div class="terminal">
+            <div class="code-result" id="result">
+                <!-- {{ submission.result|linebreaks }} -->
             </div>
-        </form>
-        <div class="modal fade" id="id_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <!-- <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>  -->
-                    <div class="modal-body text-center" id="id_modalcontent">
-                                <p>
-                                    <span class="text-info">Result: </span>
-                                    <span id="result">
-                                    {{ submission.result|linebreaks }}
-                                    </span>
-                                </p>
-                                
-                                <p>
-                                    <!-- status -->
-                                    <div id="status">
-                                    &nbsp;{{ submission.status }}&nbsp;
-                                    </div>
-                                </p>
-                            
+        </div>
+    </div>
+    <div class="modal fade" id="id_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                
+                <div class="modal-body" id="id_modalcontent">
+                    <div class="container p-3 text-center">
+                        <h6 class="text-secondary mb-0" id="status">
+                        </h6>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        
-                        <a type="button" href="{% if next_lesson %} { next_lesson.get_absolute_url } {% endif %}" class="btn btn-primary disabled" id="id_nextlesson">Next lesson</a>
-                        
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
                 </div>
             </div>
         </div>
-        <script>
-            $["#id_form"].submit(function(){
-                $["#result"].text("");
-                $["#status"].text("");
-            });
-        </script>
-        <script>
-                //getting CSRF token
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie != '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = jQuery.trim(cookies[i]);
-                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
-    
-                //AJAX post
-                $("#id_form").submit(function(e) {
-                    e.preventDefault();
-                    var csrftoken = getCookie('csrftoken');
-                    var code = $('#id_code').val();
-                    $("#result").text(" ");
-                    $("#status").text(" ");
-                    $.ajax({
-                        url: window.location.href,
-                        type: "POST",
-                        data: {
-                            csrfmiddlewaretoken: csrftoken,
-                            code: code
-                        },
-                        
-                        success: function(json) {
-                            console.log(json);
-                            var s=document.getElementById("status");
-                            var r=document.getElementById("result");
-                            r.innerHTML=json['result'];
-                            if (json['status'] === undefined) {
-                                s.innerHTML = 'Make another try!';
-                            }
-                            else if (json['status'] == 'AC') {
-                                s.innerHTML = 'Good Job!';
-                                if (json['next_lesson']) {
-                                    var btn = document.getElementById("id_nextlesson");
-                                    btn.removeClass("disabled");
-                                }
-                                // element.innerHTML = 'staus: ' + json['status'] + '<br>result: '+json['result'];
-                            }
-                            else {
-                                s.innerHTML = 'Make another try!';
-                            }
-                            
-                        },
-    
-                        error: function(xhr, errmsg, err) {
-                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                        }
-                    });
-                });
-            </script>
     </div>
-</div> {% endblock content %}
+    <!-- <script>
+        $("#id_form").submit(function() {
+            $("#result").text("");
+            $("#status").text("");
+        });
+    </script> -->
+    <script>
+        //getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        //AJAX post
+        $("#id_form").submit(function(e) {
+            e.preventDefault();
+            var csrftoken = getCookie('csrftoken');
+            var code = $('#id_code').val();
+            $("#result").html(" ");
+            $("#status").html(" ");
+            $.ajax({
+                url: window.location.href,
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    code: code
+                },
+                
+                beforeSend: function(){
+                    $('#runid').html('Running...');
+                },
+                complete: function(){
+                    $('#runid').html('Run');
+                },
+                success: function(json) {
+                    console.log(json);
+                    var s = $("#status");
+                    var r = $("#result");
+                    if (json['result'] !== undefined)
+                        r.html(json['result'].replace(/\n/g, "<br/>"));
+                    else
+                        return;
+                    console.log(json['result']);
+
+                    if (json['status'] === undefined) {
+                        s.html('Make another try!');
+
+                    } else if (json['status'] == 'AC') {
+                        r.css("color", "#eee");
+                        s.html('Good Job!');
+                        if (json['next_lesson']) {
+                            $("#next").removeClass("disabled");
+                        }
+                        $('#current-lesson').attr('data-glyph','check-thin');
+                        $('#current-lesson').addClass('checked');
+                        // element.innerHTML = 'staus: ' + json['status'] + '<br>result: '+json['result'];
+                    } else if (json['status'] == 'CE') {
+                        r.css("color", "#a33");
+                        s.html('Make another try!');
+                    } else {
+                        s.html('Make another try!');
+                    }
+                    $('#id_modal').modal('show');
+                },
+
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        });
+    </script>
+</div> 
+<div class="bottom-nav "> 
+    <div class="menu-wrapper">
+    <button type="button" class="btn btn-menu no-radius dropdown-toggle h-100" id="navbar-side-btn">
+        <span class="oi oi-menu"></span>
+        &nbsp; {{ lesson.lesson_num}}. {{ lesson.lesson_name }}
+    </button>
+    </div>
+    <div class="progress-nav text-white mb-0">
+            {{ lesson.lesson_num }}/{{ lesson.course.total_lesson }}
+    </div>
+
+    <div class="flex-1">
+        <a role="button" href="{{ lesson.course.get_absolute_url }}" class="btn btn-primary no-radius align-self-center float-right mr-3 text-light">
+            Back
+        </a>
+    </div>
+    
+    
+</div>
+<div class="overlay"></div>
+<div class="navbar-side" id="navbar-side" >
+    <div class="navbar-side-header" id="fold-navbar-side" >
+        {% comment %} <span class="iconic text-light" data-glyph="chevron-left" title="chevron left" aria-hidden="true"></span> {% endcomment %}
+        <span class="oi oi-chevron-left text-light"></span>
+        <h5 class="d-inline text-light">     
+            &nbsp;{{ lesson.lesson_name }}
+        </h5>
+    </div>
+    <div class="navbar-side-body">
+    {% for each_lesson in lesson.course.lesson_set.all %}
+          
+    <a role="button" class="text-left btn text-grey navbar-side-item d-flex align-items-center justify-content-between" href="{{ each_lesson.get_absolute_url }}">
+        {{each_lesson.lesson_num}}. {{each_lesson.lesson_name}}
+        {% if user|have_learned:each_lesson %} 
+        <span {% if each_lesson == lesson %} id="current-lesson" {% endif %} class="iconic float-right checked" style="height:1em;" data-glyph="check-thin" title="check thin" aria-hidden="true"></span>
+        {% else %}
+        <span {% if each_lesson == lesson %} id="current-lesson" {% endif %} class="iconic float-right" style="height:1em;" data-glyph="lock-locked" title="lock locked" aria-hidden="true"></span>
+
+        {% endif %}
+    </a>
+    {% endfor %}
+    </div>
+</div>
+    
+    <script>
+        
+    $('#navbar-side-btn').on('click', function() {
+        $('#navbar-side').addClass('reveal');
+        $('.overlay').show();
+    });
+       
+    $('.overlay').on('click', function(){
+        $('#navbar-side').removeClass('reveal');
+        $('.overlay').hide();
+    });
+    $('#fold-navbar-side').on('click', function(){
+        $('#navbar-side').removeClass('reveal');
+        $('.overlay').hide();
+    })   
+    </script>
+
+{% endblock content %}

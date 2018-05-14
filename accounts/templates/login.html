@@ -1,13 +1,113 @@
-{% extends 'base.html' %}
+{% extends 'edit_base.html' %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
+
+
+<form id="login_form" method="POST" action="{% url 'login' %}">
+  <div class="modal-body form-group mb-0">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-  <a href="{% url 'password_reset' %}">忘记密码？</a>
+    <label class="sr-only" for="id_username">用户名:</label> 
+    <div class="input-group">
+      <div class="input-group-addon">
+        <div class="input-group-text"><span class="oi oi-person"></span></div>
+      </div>
+      <input id="id_username" class="form-control" maxlength="254" placeholder="请输入用户名" name="username" type="text">
+    </div>
+    <div id="username_feedback" class="invalid-feedback d-block">
+      &nbsp;
+    </div>
+    
+    <label class="sr-only" for="id_password">密码:</label> 
+    <div class="input-group">
+      <div class="input-group-addon">
+        <div class="input-group-text"><span class="oi oi-key"></span></div>
+      </div>
+      <input id="id_password" class="form-control" name="password" placeholder="请输入密码" type="password">
+      
+    </div>
+    <div id="password_feedback" class="invalid-feedback d-block">
+      &nbsp;
+    </div>
+    <br>
+    
+    <a class="text-secondary" role="button" href="{% url 'password_reset' %}">忘记密码？</a>
+
+  </div>
+    
+    
+  <div class="modal-footer">
+
+    
+    <button class="btn btn-primary" type="submit" id="login-btn">登录</button>
+  </div>
+</form>
+<script>
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+
+  //AJAX post
+  $("#login_form").submit(function(e) {
+    e.preventDefault();
+    var csrftoken = getCookie('csrftoken');
+    $('#username_feedback').html('&nbsp;');
+    $('#id_username').removeClass('is-invalid');
+    $('#password_feedback').html('&nbsp;');
+    $('#id_password').removeClass('is-invalid');
+    
+    $.ajax({
+        url: $(this).attr("action"),
+        type: "POST",
+        data: {
+            csrfmiddlewaretoken: csrftoken,
+            username: $('#id_username').val(),
+            password: $('#id_password').val()
+        },
+        
+        success: function(json) {
+            console.log(json);
+            if(json['status']=='success'){
+              $('#loginModal').modal('hide');
+              location.reload();
+            }
+            else if(json['status'] == 'error'){
+              switch(json['field']){
+                
+                case 'username':
+
+                  $('#username_feedback').html(json['error_message']);
+                  $('#username_feedback').show();
+                  $('#id_username').addClass('is-invalid');
+
+                break;
+                case 'password':
+                  $('#password_feedback').html(json['error_message']);
+                  $('#id_password').addClass('is-invalid');
+                break;
+                
+              }
+            }
+        },
+
+        error: function(xhr, errmsg, err) {
+          //console.log("error");
+          console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+  });
+</script>
+
 {% endblock %}

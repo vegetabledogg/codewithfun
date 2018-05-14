@@ -10,7 +10,10 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/static/css/fullscreen.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/open-iconic-bootstrap.css">
+    <link rel="stylesheet" href="/static/css/iconic.css">
     <script src="/static/codemirror/lib/codemirror.js "></script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -20,53 +23,126 @@
     <script src="/static/js/bootstrap.min.js "></script>
 
     <!-- <script type="text/javascript" src="/static/js/formattohtml.js"></script> -->
-    <link rel="stylesheet" href="/static/codemirror/theme/dracula.css">
+    <link rel="stylesheet" href="/static/codemirror/theme/solarized.css">
     <title>Code With Fun</title>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark sticky-top justify-content-between" style="background-color: #4C3D5C">
-        <a class="navbar-brand" href="{% url 'learn' %}">
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-expand-md navbar-dark sticky-top justify-content-between bg-primary">
+        <div class="container" id="nav-container">
+        <a class="navbar-brand" style="height:2rem;" href="{% url 'learn' %}">
             <img src="" class="d-inline-block"> Code With Fun
         </a>
 
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home</a>
+                    <a class="nav-link" href="{% url 'learn' %}">首页</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" id="dropmenu" data-toggle="dropdown" role="button">
                         {% if user.is_authenticated %}
                         {% load staticfiles %}
-                        <img class="rounded-circle" style="width:40px; height:40px" src="/media/{{ user.avatar }}">
+                        <img class="rounded-circle" style="width:2rem; height:2rem" src="/media/{{ user.avatar }}">
                         {% else %}
-                        <img class="rounded-circle" style="width:40px; height:40px" src="/media/avatar/default.jpg">
+                        <img class="rounded-circle" style="width:2rem; height:2rem" src="/static/avatar/default_avatar.png">
                         {% endif %}
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right " style="min-width:auto">
+                    <div class="dropdown-menu dropdown-menu-right no-radius" style="min-width:auto">
                         {% if user.is_authenticated %}
                         <h6 class="dropdown-header" style="text-align:right">Hi, {{ user.username }}!</h6>
+                        <a class="dropdown-item" href="{% url 'learned_course' %}" style="text-align:right">已学课程</a>
 
-                        <a class="dropdown-item" href="{% url 'edit' %}" style="text-align:right">edit</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'logout' %}" style="text-align:right">log out</a> {% else %}
-                        <a class="dropdown-item" href="{% url 'login' %}" style="text-align:right">log in</a>
-                        <a class="dropdown-item" href="{% url 'signup' %}" style="text-align:right">sign up</a> {% endif %}
+                        <a class="dropdown-item" href="{% url 'edit' %}" style="text-align:right">我的资料</a>
+
+                        <a class="dropdown-item" data-toggle="modal" data-title="退出登录" data-remote="{% url 'logout' %}" data-target="#logoutModal" style="text-align:right">退出</a> {% else %}
+                        <a class="dropdown-item" data-toggle="modal" data-title="登录" data-remote="{% url 'login' %}" data-target="#loginModal" style="text-align:right">登录</a>
+                        <a class="dropdown-item" data-toggle="modal" data-title="注册" data-remote="{% url 'signup' %}" data-target="#signupModal" style="text-align:right">注册</a> {% endif %}
 
                     </div>
                 </li>
             </ul>
         </div>
-
+    </div>
     </nav>
-    <div class="container-fluid mt-3">
 
         {% block content %} {% endblock %}
-
-    </div>
-
+        {% if user.is_authenticated %}
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalTitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        
+                        <h2 class="modal-title" id="logoutModalTitle"></h2>
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-main">
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <script>
+        $('#logoutModal').on('hide.bs.modal', function (event) {
+            location.reload();
+        });
+        </script>
+        {% else %}
+        <!-- Model -->
+        <div class="modal fade" id="loginModal" tabindex="-1"
+            role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        
+                        <h3 class="modal-title" id="loginModalLabel"></h3>
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-main">
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- Model -->
+        <div class="modal fade" id="signupModal" tabindex="-1"
+            role="dialog" aria-labelledby="signupModalTitle" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        
+                        <h3 class="modal-title" id="signupModalTitle"></h3>
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-main">
+                        
+                    </div>
+                   
+                </div>
+            </div>
+        {% endif %}
+        <script>
+            $('body').on('click.modal.data-api', '[data-toggle="modal"]', function(){
+              $($(this).data("target")+' .modal-main').load($(this).data('remote')); 
+              $($(this).data("target")+' .modal-title').html($(this).data('title')); 
+                console.log($(this).data('title'));
+            });
+        </script>
+        
 </body>
 
 </html>

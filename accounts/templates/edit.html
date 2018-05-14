@@ -1,10 +1,59 @@
-{% extends 'edit_base.html' %}
+{% extends 'learn/base.html' %}
 
 {% block content %}
-<h2>Edit profile</h2>
-<form method="post" enctype="multipart/form-data" >
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">确定修改</button>
-</form>
+<div class="container mt-5">
+    <h3 class="text-center mb-5">我的资料</h3>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="list-group no-radius">
+                <a href="{% url 'edit' %}" class="no-radius list-group-item list-group-item-action btn-primary active">
+                    修改基本信息
+                </a>
+                <a href="{% url 'edit_pwd' %}" class="no-radius list-group-item list-group-item-action">
+                    修改密码
+                </a>
+                <a data-toggle="modal" data-title="退出登录" data-remote="{% url 'logout' %}" href="" data-target="#logoutModal" class="no-radius list-group-item list-group-item-action">
+                    退出登录
+                </a>
+
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            <form method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_username">用户名</label>
+                    <input type="text" maxlength="30" name="username" class="no-radius form-control" id="id_username" aria-describedby="usernameHelp" placeholder="{{ user.username }}">
+                    <small id="usernameHelp" class="form-text text-muted">{{ form.username.help_text }}</small>
+                </div>
+                <div class="form-group">
+                    <label for="id_email">电子邮件地址</label>
+                    <input type="email" maxlength="254" name="email" class="form-control no-radius " id="id_email" placeholder="{{ user.email }}">
+
+                </div>
+                <div class="form-group">
+                    <label for="id_avatar">头像</label>
+                    
+                    <img class="d-block mb-3" src="/media/{{ user.avatar }}"></img>
+                    <label class="no-radius custom-file d-block" id="avatarFile">
+                        <input type="file" class="no-radius custom-file-input" name="avatar" id="id_avatar" aria-describedby="fileHelp">
+                        <span class="no-radius custom-file-control form-control-file"></span>
+                    </label>
+                    
+                    <script>
+                        $('.custom-file-input').on('change',function(){
+                            $(this).next('.form-control-file').addClass("selected").html($(this).val());
+                        })
+                    </script>
+                </div>
+                
+                <button type="submit" class="no-radius btn btn-primary">确定修改</button>
+                    
+            </form>
+            
+        </div>
+    </div>
+  
+    
+</div>
 {% endblock %}

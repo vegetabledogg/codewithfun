@@ -1,48 +1,145 @@
-{% extends 'learn/base.html' %} {% block content %}
+{% extends 'learn/base.html' %}{% load learn_tags %} {% block content %}
+<div class="container mt-3">
 <div class="row">
     <div class="col-md-3">
-        <h2>
-            Course name: {{ course.course_name }}
-        </h2>
+            <div class="learn-area" role="tablist">
+                <div class="card border-0">
+                    <div class="card-header bg-grey border-0 d-flex justify-content-between" role="tab" id="headingOne" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <a class="text-dark" href="#collapseOne" role="button" >
+                                我的课程
+                            </a>
 
-        <hr/>
+                        </h5>
+                        <div><span class="oi oi-chevron-top align-middle" id="iconOne"></span></div>
 
-        <h2>Brief Introduction</h2>
-        <p>{% autoescape off %}{{ course.brief }}{% endautoescape %}</p>
-
-        <hr/>
-
-
-        <h2>Overview</h2>
-        <p><i><em>{% autoescape off %}{{ course.overview }}{% endautoescape %}</em></i></p>
+                    </div>
+                    
+                    <div id="collapseOne" class="collapse show list-group" role="tabpanel" aria-labelledby="headingOne">
+                                {% for each_course in all_learned_courses %}
+                                <a href="{{ each_course.get_absolute_url }}" class=" list-group-item no-radius">
+                                    {{ each_course.course_name }}
+                                </a>
+                                {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <script>
+                    function foldCard(c,i){
+                        function fold(){
+                            i.toggleClass('oi-chevron-bottom');
+                            i.toggleClass('oi-chevron-top');
+                        }
+                        c.on('show.bs.collapse',function(){
+                            fold();
+                        });
+                        c.on('hide.bs.collapse', function(){
+                            fold(); 
+                        });
+                    }
+                    foldCard($('#collapseOne'),$('#iconOne'));
+                </script>
+       
     </div>
 
 
 
     <div class="col-md-9">
-        <h1>All lessons</h1>
-        <ul class="list-group">
-            {% for each_lesson in lessons %}
-            <li class="list-group-item"><a href="{{ each_lesson.get_absolute_url }}">Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}</a></li>
-            {% endfor %}
-        </ul>
+        <div>
+            <div class="card no-radius">
+                <div class="card-body ">
+                    <h5 class="card-title">Learn {{ course.course_name }}</h5>
+                    {% if user.is_authenticated and user|enrolled:course %}
 
+                    <p class="card-text">现在学习到 <span class="text-primary">{{ current_lesson.lesson_num }}. {{ current_lesson.lesson_name }}</span></p>
 
+                    <a href="{{ current_lesson.get_absolute_url }}" class="no-radius btn btn-primary">继续学习&nbsp;<span id="st-prop"></span></a>
+                    {% elif user.is_authenticated %}
+                    <p class="card-text">您还未参与本课程，请先参与！</p>
 
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button class="no-radius btn btn-primary" type="submit">参与课程</button>
+                    </form>
+                    {% else %}
+                    <p class="card-text">您还未登录，请登录后参与本课程！</p>
+                    <a href="{% url 'login' %}" class="no-radius btn btn-primary">登录</a>
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% if user.is_authenticated %}
-        <h1>proportion</h1>
-        <button>show proportion: {{ proportion }}</button>
+
+        <h4 class="mb-1 mt-3">学习进度</h4>
+        <div class="progress no-radius">
+            <div id="proportion" class="progress-bar progress-bar-striped bg-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        
         <script>
+            var propor = {{ proportion }} *100;
+            var p = $('#proportion');
+            p.css("width",propor+"%");
+            p.attr("aria-valuenow",propor);
+            p.html(propor+"%");
+            $('#st-prop').html(propor+'%');
             function count() {
                 var checked_num = $("input[type=checkbox][name=course]:checked").length;
-                var total_lesson = {{course.total_lesson}};
-                document.getElementById("p").innerHTML = checked_num / total_lesson;
+                var total_lesson = {{ course.total_lesson }};
+                document.getElementById("p").innerHTML = checked_num / total_lesson ;
                 console.log(checked_num);
                 console.log(total_lesson);
             }
         </script>
         {% endif %}
+        <br/>
+        <ul class="nav mt-3" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active no-radius btn btn-light" data-toggle="pill" href="#pills-overview" role="tab" aria-controls="pills-overview" aria-selected="true">
+                    课程介绍
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link no-radius btn btn-light"  data-toggle="pill" href="#pills-syllabus" role="tab" aria-controls="pills-syllabus" aria-selected="false">
+                    课程表
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-home-tab">
+            <div class="card no-radius">
+                <div class="card-body ">
+                    <h5 class="card-title">简介</h5>
+                    <p>{{ course.brief }}</p>
+                    <br/>
+                    <h5 class="card-title">概览</h5>
+                    {% autoescape off %}{{ course.overview }}{% endautoescape %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pills-syllabus" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <ul class="list-group">
+                {% for each_lesson in lessons %}
+                <li class="list-group-item no-radius">
+                    <a href="{{ each_lesson.get_absolute_url }}">
+                        Lesson {{each_lesson.lesson_num}}: {{each_lesson.lesson_name}}
+                        {% if user.is_authenticated and user|have_learned:each_lesson %} 
+                        <span class="iconic float-right checked" style="height:1em;" data-glyph="check-thin" title="check thin" aria-hidden="true"></span>
+                        {% else %}
+                        <span class="iconic float-right" style="height:1em;" data-glyph="lock-locked" title="lock locked" aria-hidden="true"></span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+        
 
+
+
+        
     </div>
+</div>
 </div>
 {% endblock content %}
