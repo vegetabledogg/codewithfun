@@ -95,4 +95,4 @@ def my_login(request):
 
 def my_logout(request):
     logout(request)
-    return redirect('learn')
+    return render(request, 'logout.html')

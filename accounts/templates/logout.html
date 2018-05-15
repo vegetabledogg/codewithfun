@@ -10,7 +10,12 @@
   <p>您已成功退出！</p>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary" data-dismiss="modal">确定</button>
+  <button id="ok-btn" class="btn btn-primary" data-dismiss="modal">确定</button>
 </div>
-
+<script>
+  $("#ok-btn").click(function(){
+    $('#logoutModal').modal("hide");
+    window.location="{% url 'learn' %}";
+  })
+</script>
 {% endblock %}

@@ -89,9 +89,7 @@
             </div>
         </div>
         <script>
-        $('#logoutModal').on('hide.bs.modal', function (event) {
-            location.reload();
-        });
+       
         </script>
         {% else %}
         <!-- Model -->
@@ -139,7 +137,6 @@
             $('body').on('click.modal.data-api', '[data-toggle="modal"]', function(){
               $($(this).data("target")+' .modal-main').load($(this).data('remote')); 
               $($(this).data("target")+' .modal-title').html($(this).data('title')); 
-                console.log($(this).data('title'));
             });
         </script>
         
