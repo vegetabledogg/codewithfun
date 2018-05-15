@@ -70,7 +70,9 @@ li {
     -ms-flex-preferred-size: auto;
     flex-basis: auto;
 }
-
+#navbar{
+    height: 3rem;
+}
 .dropdown-toggle::after {
     display: none !important;
     width: 0;
