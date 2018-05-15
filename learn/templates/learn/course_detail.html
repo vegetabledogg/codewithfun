@@ -50,10 +50,11 @@
                 <div class="card-body ">
                     <h5 class="card-title">Learn {{ course.course_name }}</h5>
                     {% if user.is_authenticated and user|enrolled:course %}
+                        
+                        <p class="card-text">现在学习到 <span class="text-primary">{{ current_lesson.lesson_num }}. {{ current_lesson.lesson_name }}</span></p>
 
-                    <p class="card-text">现在学习到 <span class="text-primary">{{ current_lesson.lesson_num }}. {{ current_lesson.lesson_name }}</span></p>
-
-                    <a href="{{ current_lesson.get_absolute_url }}" class="no-radius btn btn-primary">继续学习&nbsp;<span id="st-prop"></span></a>
+                        <a href="{{ current_lesson.get_absolute_url }}" class="no-radius btn btn-primary">继续学习&nbsp;<span id="st-prop"></span></a>
+                        
                     {% elif user.is_authenticated %}
                     <p class="card-text">您还未参与本课程，请先参与！</p>
 
@@ -63,7 +64,8 @@
                     </form>
                     {% else %}
                     <p class="card-text">您还未登录，请登录后参与本课程！</p>
-                    <a href="{% url 'login' %}" class="no-radius btn btn-primary">登录</a>
+                    <a data-toggle="modal" data-title="登录" data-remote="{% url 'login' %}" data-target="#loginModal" class="no-radius btn btn-primary">登录</a>
+                    {% comment %} <a class="dropdown-item"  style="text-align:right">登录</a> {% endcomment %}
 
                     {% endif %}
                 </div>

@@ -23,12 +23,12 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_username">用户名</label>
-                    <input type="text" maxlength="30" name="username" class="no-radius form-control" id="id_username" aria-describedby="usernameHelp" placeholder="{{ user.username }}">
+                    <input type="text" maxlength="30" name="username" class="no-radius form-control" id="id_username" aria-describedby="usernameHelp" value="{{ user.username }}">
                     <small id="usernameHelp" class="form-text text-muted">{{ form.username.help_text }}</small>
                 </div>
                 <div class="form-group">
                     <label for="id_email">电子邮件地址</label>
-                    <input type="email" maxlength="254" name="email" class="form-control no-radius " id="id_email" placeholder="{{ user.email }}">
+                    <input type="email" maxlength="254" name="email" class="form-control no-radius " id="id_email" value="{{ user.email }}">
 
                 </div>
                 <div class="form-group">

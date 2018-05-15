@@ -8,11 +8,11 @@
 <!-- <ul class="nav flex-column nav-tabs"> -->
     <ul class="nav" >
         <li class="nav-item">
-            <a class="nav-link no-radius btn btn-light {% ifequal request.path '/learn/' %} active {% endifequal %}" href="{% url 'learn' %}">所有分类</a>
+            <a class="nav-link no-radius btn btn-light {% ifequal request.get_full_path '/learn/' %} active {% endifequal %}" href="{% url 'learn' %}">所有分类</a>
         </li>
         {% get_all_categories as categories %} {% for category in categories %}
         <li class="nav-item">
-            <a class="nav-link no-radius btn btn-light {% ifequal request.path category.get_absolute_url %} active {% endifequal %}" aria-selected="false" href="{{ category.get_absolute_url }}">{{ category.category_name }}</a>
+            <a class="nav-link no-radius btn btn-light {% ifequal request.get_full_path category.get_absolute_url %} active {% endifequal %}" aria-selected="false" href="{{ category.get_absolute_url }}">{{ category.category_name }}</a>
         </li>
         
         {% endfor %}
@@ -22,7 +22,7 @@
     
 <!-- <div class="col-sm-9 col-md-11 ml-sm-auto"> -->
     <div>
-    {% for each_course in all_courses %} {% if forloop.counter0|divisibleby:3 %}
+    {% for each_course in courses %} {% if forloop.counter0|divisibleby:3 %}
     </div>
     <div class="row">
         <div class="col-md-4">

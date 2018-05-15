@@ -86,7 +86,7 @@
     </div>
     <div class="my-col code-wrapper">
         <div class="code-area">
-            <form method="POST" id="id_form">
+            <form method="POST" id="id_form" action="{{ lesson.get_absolute_url }}">
                 {% csrf_token %}
 
                 <label for="{{ form.code.id_for_label }}" style="display:none"></label>
@@ -201,7 +201,6 @@
                     $('#runid').html('Run');
                 },
                 success: function(json) {
-                    console.log(json);
                     var s = $("#status");
                     var r = $("#result");
                     if (json['result'] !== undefined)

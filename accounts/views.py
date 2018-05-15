@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from accounts.models import User
 from learn.models import Lesson, Submission, Course, HaveLearned, TriedCourse
-from accounts.forms import SignUpForm, EditForm
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from accounts.forms import EditForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import JsonResponse
 import re
 
@@ -41,23 +41,6 @@ def learned_course(request):
     learned_course_num = len(all_learned_courses)
     return render(request, 'learned_course.html', {'all_learned_courses': all_learned_courses,'learned_course_num': learned_course_num})
 
-'''
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()  # load the profile instance created by the signal
-            user.save()
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
-            login(request, user)
-            return redirect('learn')
-    else:
-        form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
-'''
-
 def my_validate_email(email):  
     from django.core.validators import validate_email  
     from django.core.exceptions import ValidationError  
@@ -75,7 +58,6 @@ def signup(request):
         raw_password_1 = request.POST['password1']
         raw_password_2 = request.POST['password2']
         email = request.POST['email']
-        print(request.POST)
         if re.match(username_pattern, username) is None:
             json_response = {'status': 'error', 'field': 'username', 'error_message': '用户名格式错误'}
         elif User.objects.filter(username=username).count() > 0:
@@ -88,7 +70,6 @@ def signup(request):
             json_response = {'status': 'error', 'field': 'password2', 'error_message': '两次密码不一致'}
         elif my_validate_email(email) == False:
             json_response = {'status': 'error', 'field': 'email', 'error_message': '邮箱格式错误'}
-            return JsonResponse(error_data)
         else:
             user = User.objects.create_user(username, email, raw_password_1)             
             user = authenticate(username=username, password=raw_password_1)
@@ -100,7 +81,6 @@ def signup(request):
 
 def my_login(request):
     if request.method == 'POST':
-        print(request.POST)
         username = request.POST['username']
         raw_password = request.POST['password']
         user = authenticate(username=username, password=raw_password)
@@ -112,3 +92,7 @@ def my_login(request):
         return JsonResponse(json_response)
     else:
         return render(request, 'login.html')
+
+def my_logout(request):
+    logout(request)
+    return redirect('learn')

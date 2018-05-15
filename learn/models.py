@@ -14,7 +14,6 @@ def out_upload_path(instance, filename):
 
 class Category(models.Model):
     category_name = models.CharField(max_length=32, unique=True)
-    category_slug = models.SlugField(max_length=32, unique=True)
 
     class Meta:
         ordering = ['category_name']
@@ -23,12 +22,11 @@ class Category(models.Model):
         return self.category_name
 
     def get_absolute_url(self):
-        return reverse('learn_by_category', args=[self.category_slug])
+        return '/learn/category?category-id=' + str(self.id)
 
 class Course(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True) # 课程所属分类
     course_name = models.CharField(max_length=255, unique=True)
-    course_slug = models.SlugField(max_length=255, unique=True, db_index=True)
     brief = models.TextField()
     overview = RichTextField()
     release_date = models.DateTimeField(auto_now_add=True)
@@ -41,7 +39,7 @@ class Course(models.Model):
         return self.course_name
 
     def get_absolute_url(self):
-        return reverse('course_detail', args=[self.course_slug])
+        return '/learn/course?course-id=' + str(self.id)
     
     def total_lesson(self):
         return self.lesson_set.all().count()
@@ -56,7 +54,6 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=255)
     lesson_num = models.IntegerField()
-    lesson_slug = models.SlugField(max_length=255, unique=True, db_index=True)
     learn = RichTextField()
     instructions = RichTextField()
     hint = RichTextField()
@@ -69,10 +66,10 @@ class Lesson(models.Model):
         index_together = ['course', 'lesson_num']
 
     def __str__(self):
-        return str(self.lesson_name)
+        return str(self.course.course_name + ' ' + self.lesson_name)
 
     def get_absolute_url(self):
-        return reverse('lesson', args=[self.course.course_slug, self.lesson_slug])
+        return '/learn/lesson?lesson-id=' + str(self.id)
 
 class Testcase(models.Model):
     lesson = models.ForeignKey(Lesson)

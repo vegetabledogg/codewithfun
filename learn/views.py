@@ -4,43 +4,54 @@ from learn.forms import SubmissionForm
 from accounts.models import User
 from learn.models import Lesson, Submission, Course, HaveLearned, Category, TriedCourse
 from learn.tasks import evaluate_submission
-from django.http import JsonResponse
-def learn(request, category_url=None):
-    if category_url:
-        category = Category.objects.get(category_slug=category_url)
+from django.http import JsonResponse, HttpResponseNotFound
+
+def learn(request):
+    if 'category-id' in request.GET.keys():
+        category = get_object_or_404(Category, pk=request.GET['category-id'])
         courses = Course.objects.filter(category=category)
     else:
         courses = Course.objects.all()
-    return render(request, 'learn/learn.html', {'all_courses': courses})
+    return render(request, 'learn/learn.html', {'courses': courses})
 
-def course_detail(request, course_url):
-    course = Course.objects.get(course_slug=course_url)
+def course_detail(request):
+    if 'course-id' in request.GET.keys():
+        course = get_object_or_404(Course, pk=request.GET['course-id'])
+    else:
+        return HttpResponseNotFound()
     lessons = Lesson.objects.filter(course=course).order_by('lesson_num')
-    proportion = 0
-    current_user = request.user
     all_learned_courses = []
     current_lesson = None
+    proportion = 0
     if request.user.is_authenticated():
-        tried_courses = TriedCourse.objects.filter(user=current_user)
-        for each_leasson in tried_courses:
-            all_learned_courses.append(each_leasson.course) 
-        count = 0
-        for lesson in lessons:
-            count += len(HaveLearned.objects.filter(user=current_user, lesson=lesson))
+        tried_courses = TriedCourse.objects.filter(user=request.user)
+        all_learned_courses = [tried_course.course for tried_course in tried_courses] 
         total_lesson = course.total_lesson()
-        
-            
         if total_lesson != 0:
+            max_lesson_num = 0
+            count = 0
+            for lesson in lessons:
+                try:
+                    HaveLearned.objects.get(user=request.user, lesson=lesson)
+                    if max_lesson_num < lesson.lesson_num:
+                        max_lesson_num = lesson.lesson_num
+                    count += 1
+                except:
+                    continue
+            if max_lesson_num != total_lesson:
+                max_lesson_num += 1
+            current_lesson = Lesson.objects.get(course=course, lesson_num=max_lesson_num)
             proportion = count / total_lesson
-            current_lesson = Lesson.objects.get(lesson_num=count)
         if request.method == 'POST':
-            TriedCourse.objects.get_or_create(user=current_user, course=course)
-        
-    return render(request, 'learn/course_detail.html', {'course': course, "lessons": lessons, "proportion": proportion, 'all_learned_courses': all_learned_courses, 'current_lesson':current_lesson})
+            TriedCourse.objects.get_or_create(user=request.user, course=course)       
+    return render(request, 'learn/course_detail.html', {'course': course, "lessons": lessons, 'all_learned_courses': all_learned_courses, 'current_lesson':current_lesson, 'proportion': proportion})
 
 @login_required
-def lesson(request, course_url, lesson_url):
-    lesson = Lesson.objects.get(lesson_slug=lesson_url)
+def lesson(request):
+    if 'lesson-id' in request.GET.keys():
+        lesson = get_object_or_404(Lesson, pk=request.GET['lesson-id'])
+    else:
+        return HttpResponseNotFound()
     try:
         next_lesson = Lesson.objects.get(course=lesson.course, lesson_num=int(lesson.lesson_num)+1)
     except:
@@ -54,9 +65,7 @@ def lesson(request, course_url, lesson_url):
             data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
             if submission.status == 'AC':
                 HaveLearned.objects.get_or_create(user=submission.submitter, lesson=lesson)
-            
-            # return render(request, 'learn/lesson.html', {'course_url': course_url, 'lesson': lesson, 'next_lesson': next_lesson, 'form': form, 'sub': submission})              
             return JsonResponse(data)
     else:
         form = SubmissionForm(initial={'code': lesson.precode}) # 表单初始时在代码编辑区会显示预设代码
-    return render(request, 'learn/lesson.html', {'course_url': course_url, 'lesson': lesson, 'next_lesson': next_lesson, 'form': form})
+    return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form})
