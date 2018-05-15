@@ -5,6 +5,7 @@ from accounts.models import User
 from learn.models import Lesson, Submission, Course, HaveLearned, Category, TriedCourse
 from learn.tasks import evaluate_submission
 from django.http import JsonResponse, HttpResponseNotFound
+from django.db.models import Max
 
 def learn(request):
     if 'category-id' in request.GET.keys():
@@ -27,21 +28,13 @@ def course_detail(request):
         tried_courses = TriedCourse.objects.filter(user=request.user)
         all_learned_courses = [tried_course.course for tried_course in tried_courses] 
         total_lesson = course.total_lesson()
+        count = HaveLearned.objects.filter(user=request.user, lesson__course=course).count()
+        current_lesson_num = HaveLearned.objects.filter(user=request.user, lesson__course=course).aggregate(Max('lesson__lesson_num'))['lesson__lesson_num__max']
         if total_lesson != 0:
-            max_lesson_num = 0
-            count = 0
-            for lesson in lessons:
-                try:
-                    HaveLearned.objects.get(user=request.user, lesson=lesson)
-                    if max_lesson_num < lesson.lesson_num:
-                        max_lesson_num = lesson.lesson_num
-                    count += 1
-                except:
-                    continue
-            if max_lesson_num != total_lesson:
-                max_lesson_num += 1
-            current_lesson = Lesson.objects.get(course=course, lesson_num=max_lesson_num)
             proportion = count / total_lesson
+            if current_lesson_num != total_lesson:
+                current_lesson_num += 1
+            current_lesson = Lesson.objects.get(course=course, lesson_num=current_lesson_num)
         if request.method == 'POST':
             TriedCourse.objects.get_or_create(user=request.user, course=course)       
     return render(request, 'learn/course_detail.html', {'course': course, "lessons": lessons, 'all_learned_courses': all_learned_courses, 'current_lesson':current_lesson, 'proportion': proportion})
