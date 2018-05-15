@@ -5,10 +5,31 @@
     font-weight: normal;
     font-style: normal;
 }
-
-::-webkit-scrollbar{
-    display:none;
-  }
+::-webkit-scrollbar  
+{  
+    width: 5px;  
+    height: 5px;  
+    background-color: rgba(0, 0, 0, 0);  
+}  
+  
+/*定义滚动条轨道 内阴影+圆角*/  
+::-webkit-scrollbar-track  
+{  
+    -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3);  
+    border-radius: 3px;  
+    background-color: rgba(0, 0, 0, 0); 
+}  
+  
+/*定义滑块 内阴影+圆角*/  
+::-webkit-scrollbar-thumb  
+{  
+    border-radius: 10px;  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
+    background-color: #ddd;  
+}  
+::-webkit-scrollbar:window-inactive {  
+    display: none;    
+}  
 body {
     font-family: "Work Sans", Arial, sans-serif;
     font-weight: 400;
@@ -108,7 +129,7 @@ nav p {
     display: flex;
     align-items: stretch;
     flex-direction: column;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .knowledge {
@@ -121,21 +142,20 @@ nav p {
     margin-left: 0.5%;
     display: flex;
     align-items: stretch;
-    overflow: scroll;
 }
 
 .terminal {
     background-color: #111;
     flex: 1;
     width: 100%;
-    overflow: scroll;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .code-result {
     padding: 5px 10px;
     color: #eee;
     word-break: break-all;
-    overflow: scroll;
 }
 
 .code-wrapper {
@@ -146,7 +166,7 @@ nav p {
     flex-direction: column;
     height: calc(100vh - 5.5rem);
     align-items: stretch;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .code-area {
@@ -187,7 +207,7 @@ nav p {
     padding: 0;
     list-style: none;
     background-color: #0b191d;
-    overflow-y: scroll;
+    overflow-y: auto;
     z-index: 10000;
  
     -webkit-transform: translateX(-100%);
