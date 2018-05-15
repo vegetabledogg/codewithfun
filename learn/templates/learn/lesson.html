@@ -23,7 +23,7 @@
                     </div>
                     
                     <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="card-body border-0 pb-0">
+                        <div class="card-body border-0 pb-0" style="word-break:break-all;">
                             <h3>{{ lesson.lesson_name }}</h3>
                             {% autoescape off %}{{ lesson.learn }}{% endautoescape %}
 
@@ -42,7 +42,7 @@
 
                     </div>
                     <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingTwo">
-                        <div class="card-body border-0 pb-0">
+                        <div class="card-body border-0 pb-0" style="word-break:break-all;">
                             {% autoescape off %}{{ lesson.instructions }}{% endautoescape %}
                         </div>
                     </div>
@@ -58,7 +58,7 @@
 
                     </div>
                     <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
-                        <div class="card-body border-0 pb-0">
+                        <div class="card-body border-0 pb-0" style="word-break:break-all;">
                             {% autoescape off %}{{ lesson.hint }}{% endautoescape %}
                         </div>
                     </div>
