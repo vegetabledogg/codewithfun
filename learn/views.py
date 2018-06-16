@@ -6,7 +6,10 @@ from learn.models import Lesson, Submission, Course, HaveLearned, Category, Trie
 from learn.tasks import evaluate_submission
 from django.http import JsonResponse, HttpResponseNotFound
 from django.db.models import Max
-
+import os
+import subprocess
+import logging
+logger = logging.getLogger('django.request')
 def learn(request):
     if 'category-id' in request.GET.keys():
         category = get_object_or_404(Category, pk=request.GET['category-id'])
@@ -29,7 +32,11 @@ def course_detail(request):
         all_learned_courses = [tried_course.course for tried_course in tried_courses] 
         total_lesson = course.total_lesson()
         count = HaveLearned.objects.filter(user=request.user, lesson__course=course).count()
-        current_lesson_num = HaveLearned.objects.filter(user=request.user, lesson__course=course).aggregate(Max('lesson__lesson_num'))['lesson__lesson_num__max']
+        havelearnedlesson = HaveLearned.objects.filter(user=request.user, lesson__course=course)
+        current_lesson_num = 1
+        for i in havelearnedlesson:
+            if i.lesson.lesson_num > current_lesson_num:
+                current_lesson_num = i.lesson.lesson_num
         if total_lesson != 0:
             proportion = count / total_lesson
             if current_lesson_num != total_lesson:
@@ -46,19 +53,22 @@ def lesson(request):
     else:
         return HttpResponseNotFound()
     try:
-        next_lesson = Lesson.objects.get(course=lesson.course, lesson_num=int(lesson.lesson_num)+1)
+        next_lesson_id = Lesson.objects.get(course=lesson.course, lesson_num=int(lesson.lesson_num)+1).id
     except:
-        next_lesson = None
+        next_lesson_id = None
     if request.method == 'POST':
         form = SubmissionForm(request.POST)
         if form.is_valid():
             submission = Submission(code=form.cleaned_data['code'], lesson=lesson, submitter=request.user)
             submission.save()
             evaluate_submission(submission, lesson)
-            data = {'status': submission.status, 'result': submission.result, 'next_lesson': next_lesson}
+            logger.info(submission.status)
+            data = {'status': submission.status, 'result': submission.result, 'next_lesson_id': next_lesson_id}
             if submission.status == 'AC':
                 HaveLearned.objects.get_or_create(user=submission.submitter, lesson=lesson)
             return JsonResponse(data)
     else:
+        temp_path = os.path.abspath('submissions')
+        subprocess.call(['echo', temp_path, '>', '/home/ynl/dir'])
         form = SubmissionForm(initial={'code': lesson.precode}) # 表单初始时在代码编辑区会显示预设代码
-    return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson': next_lesson, 'form': form})
+    return render(request, 'learn/lesson.html', {'lesson': lesson, 'next_lesson_id': next_lesson_id, 'form': form})

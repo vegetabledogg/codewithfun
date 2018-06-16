@@ -97,7 +97,7 @@
                     <button class="my-col no-radius btn btn-primary" id="runid" type="submit">Run</button>
 
 
-                    <a role="button" id="next" class="my-col no-radius text-light btn btn-secondary {% if next_lesson and user|have_learned:lesson %} {% else %} disabled {% endif %}" href="{{ next_lesson.get_absolute_url}}">Next</a>
+                    <a role="button" id="next" class="my-col no-radius text-light btn btn-secondary {% if next_lesson_id and user|have_learned:lesson %} {% else %} disabled {% endif %}" href="{% url 'lesson' %}?lesson-id={{ next_lesson_id }}">Next</a>
 
                 </div>
                 <script type="text/javascript">
@@ -207,7 +207,6 @@
                         r.html(json['result'].replace(/\n/g, "<br/>"));
                     else
                         return;
-                    console.log(json['result']);
 
                     if (json['status'] === undefined) {
                         s.html('Make another try!');
@@ -215,7 +214,7 @@
                     } else if (json['status'] == 'AC') {
                         r.css("color", "#eee");
                         s.html('Good Job!');
-                        if (json['next_lesson']) {
+                        if (json['next_lesson_id']) {
                             $("#next").removeClass("disabled");
                         }
                         $('#current-lesson').attr('data-glyph','check-thin');

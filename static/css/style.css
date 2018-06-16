@@ -381,7 +381,9 @@ a.text-grey:hover{
 .collapse.show .card-body {
     border-top: 1px solid rgba(0, 0, 0, .125);
 }
-
+.card .collapse.show {
+    overflow: auto;
+}
 .border-primary {
     border-color: #001C23 !important;
 }
@@ -471,6 +473,7 @@ a.text-dark:hover {
     }
     .learn-area .card-header:first-child {
         border-radius: 0;
+        min-height: fit-content;
     }
     .learn-area .card+.card {
         margin-top: 0;
